@@ -1,0 +1,13 @@
+node_modules
+dist
+.git
+.github
+.env
+.env.local
+.env.*.local
+waha_sessions
+*.log
+npm-debug.log*
+.vscode
+.idea
+.DS_Store

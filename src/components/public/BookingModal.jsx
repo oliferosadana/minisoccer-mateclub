@@ -27,9 +27,7 @@ import {
   Wallet,
   PlusCircle,
   UploadCloud,
-  Image as ImageIcon,
   Trash2,
-  CheckCircle2,
   Camera
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
@@ -216,34 +214,6 @@ export const BookingModal = () => {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Auto-polling verification in background every 3 seconds while in Step 2
-  useEffect(() => {
-    let pollInterval = null;
-    if (activeBookingMatch && step === 2 && paymentMethod === 'qris' && totalPayable > 0) {
-      pollInterval = setInterval(async () => {
-        try {
-          const res = await checkGoPayQRISStatus({
-            serverUrl: gopayConfig.serverUrl || 'https://gopay.masondo.dev',
-            apiKey: gopayConfig.apiKey || '382050b0c6f03386901e040efd9182b56021c43e3e2932260142cbcaf3729144',
-            amount: totalPayable,
-            qrisId: dynamicQRIS?.qrisId || dynamicQRIS?.trxId || ''
-          });
-
-          if (res.paid || res.status === 'PAID' || res.status === 'SETTLED' || res.status === 'SUCCESS') {
-            clearInterval(pollInterval);
-            showToast('Pembayaran Terverifikasi Lunas Otomatis!', 'success');
-            handleAutoVerifySuccess(paymentMethod === 'qris' ? 'qris_gopay' : paymentMethod);
-          }
-        } catch (e) {
-          // ignore silent polling errors
-        }
-      }, 3000);
-    }
-    return () => {
-      if (pollInterval) clearInterval(pollInterval);
-    };
-  }, [activeBookingMatch, step, paymentMethod, dynamicQRIS, totalPayable, gopayConfig]);
-
   const handleAutoVerifySuccess = (method = paymentMethod) => {
     const booking = createBooking({
       matchId: activeBookingMatch.id,
@@ -272,6 +242,34 @@ export const BookingModal = () => {
       });
     } catch { }
   };
+
+  // Auto-polling verification in background every 3 seconds while in Step 2
+  useEffect(() => {
+    let pollInterval = null;
+    if (activeBookingMatch && step === 2 && paymentMethod === 'qris' && totalPayable > 0) {
+      pollInterval = setInterval(async () => {
+        try {
+          const res = await checkGoPayQRISStatus({
+            serverUrl: gopayConfig.serverUrl || 'https://gopay.masondo.dev',
+            apiKey: gopayConfig.apiKey || '382050b0c6f03386901e040efd9182b56021c43e3e2932260142cbcaf3729144',
+            amount: totalPayable,
+            qrisId: dynamicQRIS?.qrisId || dynamicQRIS?.trxId || ''
+          });
+
+          if (res.paid || res.status === 'PAID' || res.status === 'SETTLED' || res.status === 'SUCCESS') {
+            clearInterval(pollInterval);
+            showToast('Pembayaran Terverifikasi Lunas Otomatis!', 'success');
+            handleAutoVerifySuccess(paymentMethod === 'qris' ? 'qris_gopay' : paymentMethod);
+          }
+        } catch {
+          // ignore silent polling errors
+        }
+      }, 3000);
+    }
+    return () => {
+      if (pollInterval) clearInterval(pollInterval);
+    };
+  }, [activeBookingMatch, step, paymentMethod, dynamicQRIS, totalPayable, gopayConfig]);
 
   const handleWalletDirectPay = (e) => {
     if (e) e.preventDefault();

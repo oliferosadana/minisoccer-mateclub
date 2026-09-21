@@ -201,7 +201,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Production Login handler
-  const login = async (identifier, password, rememberMe = true) => {
+  const login = async (identifier, password, _rememberMe = true) => {
     const rawIdentifier = (identifier || '').trim();
     const cleanId = rawIdentifier.toLowerCase();
     const cleanPhone = normalizePhone(rawIdentifier);

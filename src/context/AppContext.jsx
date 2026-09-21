@@ -1073,7 +1073,7 @@ export const AppProvider = ({ children }) => {
     }));
   };
 
-  const testSendWhatsAppMessage = (phone, message) => {
+  const testSendWhatsAppMessage = (phone, _message) => {
     showToast(`[SIMULASI WA] Pesan uji coba berhasil dikirimkan ke ${phone}!`);
     return { success: true, timestamp: new Date().toISOString() };
   };
