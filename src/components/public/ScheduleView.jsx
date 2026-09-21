@@ -67,175 +67,161 @@ export const ScheduleView = () => {
   return (
     <div className="space-y-6">
       {/* ========================================================================= */}
-      {/* PREMIUM STADIUM HERO BANNER */}
+      {/* ANTI-SLOP ARCHITECTURAL HERO & TELEMETRY SECTION */}
       {/* ========================================================================= */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#07172b] via-[#0d2744] to-[#063327] text-white p-6 sm:p-8 lg:p-10 border border-white/10 shadow-2xl">
-        {/* Ambient Glows & Soccer Pitch Geometry Background */}
-        <div className="absolute top-0 right-0 -mt-16 -mr-16 w-96 h-96 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/3 -mb-20 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
-        
-        {/* Subtle Pitch Lines SVG Texture */}
-        <div className="absolute inset-0 opacity-[0.04] pointer-events-none bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]" />
+      <div className="bg-[#0b192c] text-white rounded-2xl border border-[#1e3a5f] shadow-sm overflow-hidden">
+        {/* Top Control & Operational Header */}
+        <div className="px-6 py-3.5 bg-[#081322] border-b border-[#1e3a5f] flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2.5">
+            <span className="flex h-2 w-2 relative">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <span className="font-mono text-[11px] font-bold text-gray-300 uppercase tracking-wider">
+              Sistem Operasional Matchday • Balikpapan Musim 2026
+            </span>
+          </div>
+          <div className="flex items-center gap-3 font-mono text-[11px] text-gray-400">
+            <span className="flex items-center gap-1 text-emerald-400 font-semibold">
+              <Zap className="w-3.5 h-3.5" /> {totalOpenSlots} Slot Tersedia
+            </span>
+            <span className="text-gray-600">|</span>
+            <span>{venues.length} Venue Terverifikasi</span>
+          </div>
+        </div>
 
-        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          {/* LEFT COLUMN: Hero Copy & CTAs (7 Cols) */}
+        {/* Main Content Grid */}
+        <div className="p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* Left Column: Direct Value, Specifications, & Actions (7 Cols) */}
           <div className="lg:col-span-7 space-y-5">
-            {/* Live Season Badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-400/30 text-emerald-300 text-xs font-bold backdrop-blur-md">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-              </span>
-              <span>MATCHDAY SEASON 2026 • MATE CLUB BALIKPAPAN</span>
-            </div>
-
-            {/* Main Headline */}
             <div className="space-y-2">
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-[1.15] text-white">
-                Main Mini Soccer <br className="hidden sm:inline" />
-                <span className="bg-gradient-to-r from-emerald-300 via-teal-200 to-cyan-300 bg-clip-text text-transparent">
-                  Lebih Seru & Teratur.
-                </span>
+              <div className="text-[11px] font-mono font-bold text-emerald-400 uppercase tracking-widest">
+                Platform Resmi Reservasi Pemain & Sparring Komunitas
+              </div>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight leading-snug">
+                Jadwal Pertandingan, Wasit Berlisensi & Transparansi Slot Bermain
               </h1>
               <p className="text-xs sm:text-sm text-gray-300 leading-relaxed max-w-xl">
-                Platform reservasi matchday mini soccer #1 di Balikpapan. Booking 1-klik, sistem E-Ticket QR instan, wasit berlisensi PSSI, fotografer HD di setiap laga, serta pencatatan statistik pemain.
+                Daftar sesi open play individu atau daftarkan tim sparring Anda tanpa calo. Seluruh pertandingan dilengkapi wasit resmi PSSI, dokumentasi fotografer matchday, rompi bersih per tim, dan penerbitan E-Ticket QR instan.
               </p>
             </div>
 
-            {/* Action Buttons Group */}
+            {/* Direct Action Buttons */}
             <div className="flex flex-wrap items-center gap-3 pt-1">
               <button
                 type="button"
                 onClick={scrollToSearch}
-                className="px-5 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-gray-950 font-black text-xs sm:text-sm flex items-center gap-2 shadow-lg shadow-emerald-500/25 transition-all transform hover:-translate-y-0.5 cursor-pointer"
+                className="px-5 py-2.5 rounded-xl bg-palette-primary hover:bg-palette-primaryDark text-white font-bold text-xs flex items-center gap-2 transition-all shadow-xs cursor-pointer"
               >
-                <span>Cari & Amankan Slot</span>
-                <ArrowRight className="w-4 h-4" />
+                <span>Lihat Semua Jadwal</span>
+                <ArrowRight className="w-3.5 h-3.5" />
               </button>
 
               <button
                 type="button"
                 onClick={() => setPublicTab('tracker')}
-                className="px-4 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white font-bold text-xs sm:text-sm border border-white/20 backdrop-blur-md flex items-center gap-2 transition-all cursor-pointer"
+                className="px-4 py-2.5 rounded-xl bg-[#132742] hover:bg-[#1a3559] text-gray-200 font-semibold text-xs border border-[#244775] flex items-center gap-2 transition-all cursor-pointer"
               >
-                <Ticket className="w-4 h-4 text-emerald-400" />
-                <span>Cek E-Ticket Saya</span>
+                <Ticket className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Cek & Unduh E-Ticket</span>
               </button>
             </div>
 
-            {/* Quick Live Stats Pills */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-4 border-t border-white/10 text-xs">
-              <div className="bg-white/5 backdrop-blur-xs p-2.5 rounded-xl border border-white/10">
-                <div className="text-[10px] text-gray-400 font-medium">Slot Terbuka</div>
-                <div className="text-sm sm:text-base font-black text-emerald-400 mt-0.5 font-mono flex items-center gap-1">
-                  <Zap className="w-3.5 h-3.5" />
-                  <span>{totalOpenSlots} Slot</span>
-                </div>
+            {/* Architectural Feature Matrix (Concrete Facts, Zero Fluff) */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-4 border-t border-[#1e3a5f]">
+              <div className="bg-[#081322]/80 p-3 rounded-xl border border-[#1e3a5f]">
+                <div className="text-gray-400 text-[10px] font-mono uppercase">Format Laga</div>
+                <div className="text-xs font-bold text-white mt-0.5">7 vs 7 & Trofeo 3 Tim</div>
+                <div className="text-[10px] text-gray-400 mt-1">Alokasi posisi seimbang (GK & Pemain)</div>
               </div>
 
-              <div className="bg-white/5 backdrop-blur-xs p-2.5 rounded-xl border border-white/10">
-                <div className="text-[10px] text-gray-400 font-medium">Venue Rekanan</div>
-                <div className="text-sm sm:text-base font-black text-white mt-0.5 font-mono flex items-center gap-1">
-                  <MapPin className="w-3.5 h-3.5 text-cyan-400" />
-                  <span>{venues.length} Lapangan</span>
-                </div>
+              <div className="bg-[#081322]/80 p-3 rounded-xl border border-[#1e3a5f]">
+                <div className="text-gray-400 text-[10px] font-mono uppercase">Standar Pertandingan</div>
+                <div className="text-xs font-bold text-white mt-0.5">Wasit PSSI & Foto HD</div>
+                <div className="text-[10px] text-gray-400 mt-1">Rompi bersih & bola match grade</div>
               </div>
 
-              <div className="bg-white/5 backdrop-blur-xs p-2.5 rounded-xl border border-white/10">
-                <div className="text-[10px] text-gray-400 font-medium">Wasit Resmi</div>
-                <div className="text-sm sm:text-base font-black text-white mt-0.5 flex items-center gap-1">
-                  <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Lisensi PSSI</span>
-                </div>
-              </div>
-
-              <div className="bg-white/5 backdrop-blur-xs p-2.5 rounded-xl border border-white/10">
-                <div className="text-[10px] text-gray-400 font-medium">Dokumentasi</div>
-                <div className="text-sm sm:text-base font-black text-white mt-0.5 flex items-center gap-1">
-                  <Award className="w-3.5 h-3.5 text-purple-400" />
-                  <span>Fotografer HD</span>
-                </div>
+              <div className="bg-[#081322]/80 p-3 rounded-xl border border-[#1e3a5f]">
+                <div className="text-gray-400 text-[10px] font-mono uppercase">Transparansi Biaya</div>
+                <div className="text-xs font-bold text-emerald-400 mt-0.5 font-mono">Rp 25.000 – Rp 50.000</div>
+                <div className="text-[10px] text-gray-400 mt-1">Cashback kode unik 100% ke saldo</div>
               </div>
             </div>
           </div>
 
-          {/* RIGHT COLUMN: Featured Next Match Card (5 Cols Glassmorphism) */}
+          {/* Right Column: Live Fixture Telemetry Terminal (5 Cols) */}
           <div className="lg:col-span-5">
             {nextFeaturedMatch ? (
-              <div className="relative group bg-gradient-to-b from-white/15 to-white/5 backdrop-blur-xl border border-white/20 rounded-2xl p-5 shadow-2xl transition-all duration-300 hover:border-emerald-400/50">
-                {/* Top Badge on Featured Card */}
-                <div className="flex items-center justify-between mb-3">
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-[10px] font-black uppercase tracking-wider">
-                    <Flame className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
-                    Laga Terdekat Minggu Ini
-                  </span>
-                  <span className="text-[10px] font-bold text-gray-400 font-mono">
-                    {nextFeaturedMatch.type === 'fun_football' ? '⚽ Open Play Solo' : '⚔️ Sparring Tim'}
+              <div className="bg-[#081322] border border-[#1e3a5f] rounded-xl p-4 sm:p-5 space-y-4">
+                {/* Header Badge */}
+                <div className="flex items-center justify-between border-b border-[#1e3a5f] pb-3">
+                  <div className="flex items-center gap-1.5 font-mono text-[11px] font-bold text-emerald-400">
+                    <Flame className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Laga Terdekat Berikutnya</span>
+                  </div>
+                  <span className="text-[10px] font-mono bg-[#132742] text-gray-300 px-2 py-0.5 rounded border border-[#244775]">
+                    {nextFeaturedMatch.type === 'fun_football' ? 'Solo Open Play' : 'Sparring Tim'}
                   </span>
                 </div>
 
-                {/* Match Title & Venue */}
-                <div className="space-y-1 mb-3.5">
-                  <h3 className="text-lg font-black text-white leading-tight line-clamp-1 group-hover:text-emerald-300 transition-colors">
+                {/* Match Title & Venue Info */}
+                <div className="space-y-1">
+                  <div className="text-sm font-extrabold text-white line-clamp-1">
                     {nextFeaturedMatch.title}
-                  </h3>
-                  <div className="flex items-center gap-1.5 text-xs text-gray-300">
-                    <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                    <span className="line-clamp-1">{featuredVenue?.name || 'Balikpapan Mini Soccer Arena'}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                    <MapPin className="w-3.5 h-3.5 text-palette-primary shrink-0" />
+                    <span className="line-clamp-1">{featuredVenue?.name || 'Balikpapan Soccer Field'}</span>
                   </div>
                 </div>
 
-                {/* Match Info Grid */}
-                <div className="grid grid-cols-2 gap-2 bg-black/25 p-3 rounded-xl border border-white/10 text-xs mb-3.5">
-                  <div className="space-y-0.5">
-                    <div className="text-[10px] text-gray-400 flex items-center gap-1">
-                      <Calendar className="w-3 h-3 text-emerald-400" /> Tanggal
-                    </div>
-                    <div className="font-bold text-white font-mono text-[11px] truncate">
+                {/* Schedule Metric Box */}
+                <div className="grid grid-cols-2 gap-2 bg-[#0b192c] p-2.5 rounded-lg border border-[#1e3a5f] text-xs font-mono">
+                  <div>
+                    <div className="text-[10px] text-gray-400">Tanggal</div>
+                    <div className="font-bold text-white text-[11px] truncate">
                       {nextFeaturedMatch.dateLabel || nextFeaturedMatch.date}
                     </div>
                   </div>
-                  <div className="space-y-0.5">
-                    <div className="text-[10px] text-gray-400 flex items-center gap-1">
-                      <Clock className="w-3 h-3 text-cyan-400" /> Jam Main
-                    </div>
-                    <div className="font-bold text-white font-mono text-[11px] truncate">
+                  <div>
+                    <div className="text-[10px] text-gray-400">Waktu Kickoff</div>
+                    <div className="font-bold text-white text-[11px] truncate">
                       {nextFeaturedMatch.timeSlot}
                     </div>
                   </div>
                 </div>
 
-                {/* Slot Progress Indicator */}
-                <div className="space-y-1.5 mb-4">
-                  <div className="flex justify-between items-center text-xs">
-                    <span className="text-gray-300 text-[11px]">Kapasitas Pemain:</span>
-                    <span className="font-mono font-bold text-white text-[11px]">
-                      <strong className="text-emerald-400">{featuredFilled}</strong> / {featuredTotal} ({featuredRemaining} Tersisa)
+                {/* Slot Capacity Status */}
+                <div className="space-y-1.5">
+                  <div className="flex justify-between items-center text-[11px]">
+                    <span className="text-gray-400 font-mono">Kapasitas Slot:</span>
+                    <span className="font-mono font-bold text-white">
+                      <span className="text-emerald-400">{featuredFilled}</span> / {featuredTotal} ({featuredRemaining} Kosong)
                     </span>
                   </div>
-                  <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+                  <div className="w-full bg-[#132742] rounded-full h-2 overflow-hidden border border-[#244775]">
                     <div 
-                      className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all duration-500 rounded-full"
+                      className="h-full bg-emerald-500 transition-all duration-300 rounded-full"
                       style={{ width: `${featuredProgress}%` }}
                     />
                   </div>
                 </div>
 
-                {/* Book Action Button */}
+                {/* Single Click Booking Action */}
                 <button
                   type="button"
                   onClick={() => setActiveBookingMatch(nextFeaturedMatch)}
-                  className="w-full py-2.5 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-black text-xs flex items-center justify-center gap-1.5 transition-all shadow-md shadow-emerald-500/20 cursor-pointer"
+                  className="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs"
                 >
-                  <span>Amankan Slot Sesi Ini</span>
+                  <span>Reservasi Slot Laga Ini</span>
                   <ChevronRight className="w-4 h-4" />
                 </button>
               </div>
             ) : (
-              <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-6 text-center text-gray-300">
-                <Calendar className="w-10 h-10 text-emerald-400 mx-auto mb-2 opacity-80" />
-                <div className="text-sm font-bold text-white">Jadwal Baru Segera Hadir</div>
-                <div className="text-xs text-gray-400 mt-1">Pantau terus kalender matchday MATE CLUB.</div>
+              <div className="bg-[#081322] border border-[#1e3a5f] rounded-xl p-6 text-center text-gray-400 text-xs">
+                <Calendar className="w-8 h-8 text-gray-500 mx-auto mb-2" />
+                <div className="font-bold text-white">Belum Ada Jadwal Aktif</div>
+                <div className="text-[11px] mt-1">Admin sedang menyusun jadwal matchday baru.</div>
               </div>
             )}
           </div>
