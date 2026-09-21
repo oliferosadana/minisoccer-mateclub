@@ -14,6 +14,8 @@ import {
   CheckCircle2,
   Zap,
   Award,
+  Camera,
+  Video,
   Trophy,
   Clock,
   ChevronRight,
@@ -94,7 +96,7 @@ export const ScheduleView = () => {
       {/* ========================================================================= */}
       <div className="relative text-white rounded-2xl border border-white/10 shadow-lg overflow-hidden bg-[#071322] px-6 py-9 sm:py-11 sm:px-10 text-center">
         {/* Stadium Background Image */}
-        <div 
+        <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-40 transition-transform duration-700 hover:scale-105"
           style={{ backgroundImage: `url('/images/hero-stadium.jpg')` }}
         />
@@ -122,7 +124,7 @@ export const ScheduleView = () => {
 
           {/* Subtitle */}
           <p className="text-xs sm:text-sm text-gray-300 leading-relaxed max-w-lg mx-auto">
-            Reservasi slot open play individu atau daftarkan tim sparring Anda. Dilengkapi wasit berlisensi, dokumentasi foto HD, dan verifikasi E-Ticket instan.
+            Reservasi slot open play individu atau daftarkan tim sparring Anda. Dilengkapi wasit berlisensi, dokumentasi foto & video HD, dan verifikasi E-Ticket instan.
           </p>
 
           {/* Action Buttons */}
@@ -148,11 +150,11 @@ export const ScheduleView = () => {
 
           {/* Minimal Specs Bar */}
           <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 pt-2 text-[11px] text-gray-400 font-medium">
-            <span className="flex items-center gap-1">⚽ Format 7v7 & Trofeo</span>
-            <span className="hidden sm:inline text-gray-600">•</span>
             <span className="flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> Wasit Lisensi Resmi</span>
             <span className="hidden sm:inline text-gray-600">•</span>
-            <span className="flex items-center gap-1"><Award className="w-3.5 h-3.5 text-purple-400" /> Fotografer HD</span>
+            <span className="flex items-center gap-1"><Camera className="w-3.5 h-3.5 text-purple-400" /> Fotografer HD</span>
+            <span className="hidden sm:inline text-gray-600">•</span>
+            <span className="flex items-center gap-1"><Video className="w-3.5 h-3.5 text-cyan-400" /> Videografer Matchday</span>
           </div>
         </div>
       </div>
