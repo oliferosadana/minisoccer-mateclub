@@ -60,7 +60,7 @@ export const RefereeModal = () => {
           <div className="flex items-center gap-2">
             <UserCheck className="w-5 h-5 text-palette-primary" />
             <h3 className="font-extrabold text-sm text-white">
-              {isEdit ? `Edit Wasit: ${activeRefEdit.name}` : 'Tambah Wasit PSSI Baru'}
+              {isEdit ? `Edit Wasit: ${activeRefEdit.name}` : 'Tambah wasit profesional Baru'}
             </h3>
           </div>
           <button

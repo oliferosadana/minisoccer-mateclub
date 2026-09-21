@@ -36,7 +36,7 @@ export const ScheduleView = () => {
           <p className="text-xs sm:text-sm text-gray-300 leading-relaxed mb-6">
             Pilih sesi open play individu atau daftarkan tim sparring Anda. Semua pertandingan terintegrasi dengan wasit berlisensi, dokumentasi fotografer matchday, dan pencatatan statistik pemain.
           </p>
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4 border-t border-palette-darker">
             <div className="bg-palette-darker/70 p-3 rounded-xl border border-gray-700/50">
               <div className="text-palette-subtle text-[11px] font-medium">Format Pertandingan</div>
@@ -44,7 +44,7 @@ export const ScheduleView = () => {
             </div>
             <div className="bg-palette-darker/70 p-3 rounded-xl border border-gray-700/50">
               <div className="text-palette-subtle text-[11px] font-medium">Fasilitas Matchday</div>
-              <div className="text-sm font-bold text-white mt-0.5">Wasit PSSI & Rompi Bersih</div>
+              <div className="text-sm font-bold text-white mt-0.5">wasit profesional & Rompi Bersih</div>
             </div>
             <div className="bg-palette-darker/70 p-3 rounded-xl border border-gray-700/50">
               <div className="text-palette-subtle text-[11px] font-medium">Transparansi Biaya</div>
@@ -73,31 +73,28 @@ export const ScheduleView = () => {
           <div className="flex items-center gap-1.5 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
             <button
               onClick={() => setTypeFilter('all')}
-              className={`px-3 py-2 rounded-xl text-xs font-bold shrink-0 transition-all ${
-                typeFilter === 'all'
+              className={`px-3 py-2 rounded-xl text-xs font-bold shrink-0 transition-all ${typeFilter === 'all'
                   ? 'bg-palette-primary text-white shadow-xs'
                   : 'bg-palette-bg text-gray-600 hover:bg-palette-subtle/50'
-              }`}
+                }`}
             >
               Semua Format
             </button>
             <button
               onClick={() => setTypeFilter('fun_football')}
-              className={`px-3 py-2 rounded-xl text-xs font-bold shrink-0 transition-all ${
-                typeFilter === 'fun_football'
+              className={`px-3 py-2 rounded-xl text-xs font-bold shrink-0 transition-all ${typeFilter === 'fun_football'
                   ? 'bg-palette-primary text-white shadow-xs'
                   : 'bg-palette-bg text-gray-600 hover:bg-palette-subtle/50'
-              }`}
+                }`}
             >
               ⚽ Open Play Solo
             </button>
             <button
               onClick={() => setTypeFilter('sparring')}
-              className={`px-3 py-2 rounded-xl text-xs font-bold shrink-0 transition-all ${
-                typeFilter === 'sparring'
+              className={`px-3 py-2 rounded-xl text-xs font-bold shrink-0 transition-all ${typeFilter === 'sparring'
                   ? 'bg-palette-primary text-white shadow-xs'
                   : 'bg-palette-bg text-gray-600 hover:bg-palette-subtle/50'
-              }`}
+                }`}
             >
               ⚔️ Sparring Tim
             </button>
@@ -111,11 +108,10 @@ export const ScheduleView = () => {
           </span>
           <button
             onClick={() => setSelectedVenue('all')}
-            className={`px-2.5 py-1 rounded-lg text-xs font-semibold shrink-0 transition-all ${
-              selectedVenue === 'all'
+            className={`px-2.5 py-1 rounded-lg text-xs font-semibold shrink-0 transition-all ${selectedVenue === 'all'
                 ? 'bg-palette-dark text-white'
                 : 'bg-palette-bg text-gray-600 hover:bg-palette-subtle'
-            }`}
+              }`}
           >
             Semua Lapangan ({venues.length})
           </button>
@@ -123,11 +119,10 @@ export const ScheduleView = () => {
             <button
               key={v.id}
               onClick={() => setSelectedVenue(v.id)}
-              className={`px-2.5 py-1 rounded-lg text-xs font-semibold shrink-0 transition-all ${
-                selectedVenue === v.id
+              className={`px-2.5 py-1 rounded-lg text-xs font-semibold shrink-0 transition-all ${selectedVenue === v.id
                   ? 'bg-palette-dark text-white'
                   : 'bg-palette-bg text-gray-600 hover:bg-palette-subtle'
-              }`}
+                }`}
             >
               {v.name}
             </button>

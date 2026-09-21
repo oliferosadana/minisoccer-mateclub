@@ -1,36 +1,36 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatIDR } from '../../lib/supabase';
-import { 
-  UserCheck, 
-  Camera, 
-  Plus, 
-  Edit3, 
-  Trash2, 
-  Star, 
-  Phone, 
-  ExternalLink 
+import {
+  UserCheck,
+  Camera,
+  Plus,
+  Edit3,
+  Trash2,
+  Star,
+  Phone,
+  ExternalLink
 } from 'lucide-react';
 
 export const OfficialsSection = () => {
-  const { 
-    referees, 
-    deleteReferee, 
+  const {
+    referees,
+    deleteReferee,
     setActiveRefEdit,
-    photographers, 
-    deletePhotographer, 
-    setActivePhotoEdit 
+    photographers,
+    deletePhotographer,
+    setActivePhotoEdit
   } = useApp();
 
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Left Column: Wasit PSSI */}
+        {/* Left Column: wasit profesional */}
         <div className="bg-white p-5 sm:p-6 rounded-3xl border border-palette-subtle shadow-card space-y-4">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="font-extrabold text-sm text-palette-dark flex items-center gap-2">
-                <UserCheck className="w-4 h-4 text-palette-primary" /> Wasit Berlisensi PSSI
+                <UserCheck className="w-4 h-4 text-palette-primary" /> Wasit Berlisensi
               </h3>
               <p className="text-[11px] text-gray-500">Perangkat pertandingan resmi bersertifikat</p>
             </div>

@@ -85,7 +85,7 @@ export const FacilityModal = () => {
             <input
               type="text"
               required
-              placeholder="Contoh: Wasit Berlisensi PSSI"
+              placeholder="Contoh: Wasit Berlisensi"
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="w-full px-3 py-2 rounded-xl border border-palette-subtle focus:border-palette-primary outline-none"

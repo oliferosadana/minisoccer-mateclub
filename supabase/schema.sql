@@ -40,7 +40,7 @@ create table if not exists public.venues (
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
--- 3. REFEREES (WASIT BERLISENSI PSSI)
+-- 3. REFEREES (Wasit Berlisensi)
 create table if not exists public.referees (
   id text primary key,
   name text not null,
@@ -97,7 +97,7 @@ create table if not exists public.matches (
   status text default 'open' check (status in ('open', 'confirmed', 'completed', 'cancelled')),
   level text default 'Medium / Menengah',
   level_badge text default '⚡ Medium',
-  facilities text[] default array['Wasit Berlisensi PSSI', 'Dokumentasi Foto HD', 'Rompi Bersih', 'Air Mineral']::text[],
+  facilities text[] default array['Wasit Berlisensi', 'Dokumentasi Foto HD', 'Rompi Bersih', 'Air Mineral']::text[],
   total_slots int not null default 24,
   player_slots int not null default 22,
   gk_slots int not null default 2,

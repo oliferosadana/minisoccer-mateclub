@@ -8,15 +8,15 @@ export const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div className="md:col-span-2">
             <div className="flex items-center gap-3 mb-3">
-              <img 
-                src="/logo.png" 
-                alt="MATE CLUB Balikpapan" 
-                className="h-10 w-auto object-contain bg-white/10 p-1.5 rounded-xl border border-white/10" 
+              <img
+                src="/logo.png"
+                alt="MATE CLUB Balikpapan"
+                className="h-10 w-auto object-contain bg-white/10 p-1.5 rounded-xl border border-white/10"
               />
               <span className="font-bold text-base tracking-tight">MATE CLUB BALIKPAPAN</span>
             </div>
             <p className="text-gray-300 max-w-sm leading-relaxed mb-4">
-              Platform ekosistem komunitas sepak bola & mini soccer terbesar di Balikpapan. Menghubungkan solo player, tim amatir, wasit PSSI, fotografer pro, dan venue rekanan.
+              Platform ekosistem komunitas sepak bola & mini soccer terbesar di Balikpapan. Menghubungkan solo player, tim amatir, wasit profesional, fotografer pro, dan venue rekanan.
             </p>
             <div className="flex items-center gap-2 text-emerald-400 font-semibold text-[11px]">
               <ShieldCheck className="w-4 h-4" /> Sistem Pembayaran Terverifikasi & Bebas Calo

@@ -105,7 +105,7 @@ export const INITIAL_PHOTOGRAPHERS = [
 export const INITIAL_FACILITIES = [
   {
     id: 'fac-1',
-    name: 'Wasit Berlisensi PSSI',
+    name: 'Wasit Berlisensi',
     icon: 'fa-user-tie',
     category: 'match',
     badgeColor: '#3f72af',
@@ -234,7 +234,7 @@ export const INITIAL_MATCHES = [
     status: 'open',
     level: 'Casual / Santai / Open',
     levelBadge: '🌟 Fun & Friendly',
-    facilities: ['Wasit Berlisensi PSSI', 'Dokumentasi Foto HD', 'Rompi Bersih & Higienis', 'Air Mineral & Hidrasi', 'P3K & Medis Pertolongan Pertama'],
+    facilities: ['Wasit Berlisensi', 'Dokumentasi Foto HD', 'Rompi Bersih & Higienis', 'Air Mineral & Hidrasi', 'P3K & Medis Pertolongan Pertama'],
     totalSlots: 24,
     playerSlots: 22,
     gkSlots: 2,
@@ -271,7 +271,7 @@ export const INITIAL_MATCHES = [
     status: 'open',
     level: 'Medium / Menengah',
     levelBadge: '⚡ Medium Pro',
-    facilities: ['Wasit Berlisensi PSSI', 'Dokumentasi Foto HD', 'Air Mineral & Hidrasi', 'P3K & Medis Pertolongan Pertama'],
+    facilities: ['Wasit Berlisensi', 'Dokumentasi Foto HD', 'Air Mineral & Hidrasi', 'P3K & Medis Pertolongan Pertama'],
     totalSlots: 2,
     playerSlots: 2,
     gkSlots: 0,
@@ -285,7 +285,7 @@ export const INITIAL_MATCHES = [
       dpStatus: 'Lunas DP'
     },
     teamB: null,
-    summary: 'Sparring 2x45 menit format 7v7 kompetitif sehat dengan perangkat wasit PSSI.'
+    summary: 'Sparring 2x45 menit format 7v7 kompetitif sehat dengan perangkat wasit profesional.'
   },
   {
     id: 'M-BPP-103',
@@ -305,7 +305,7 @@ export const INITIAL_MATCHES = [
     status: 'open',
     level: 'Casual / Rekreasi',
     levelBadge: '🌙 Night Lights',
-    facilities: ['Wasit Berlisensi PSSI', 'Dokumentasi Foto HD', 'Rompi Bersih', 'Air Mineral'],
+    facilities: ['Wasit Berlisensi', 'Dokumentasi Foto HD', 'Rompi Bersih', 'Air Mineral'],
     totalSlots: 24,
     playerSlots: 22,
     gkSlots: 2,

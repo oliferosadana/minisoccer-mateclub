@@ -3,14 +3,14 @@ import { useApp } from '../../../context/AppContext';
 import { X, CalendarPlus, Check, Trash2 } from 'lucide-react';
 
 export const MatchModal = () => {
-  const { 
-    activeMatchEdit, 
-    setActiveMatchEdit, 
-    venues, 
-    referees, 
-    photographers, 
-    facilities, 
-    addMatch, 
+  const {
+    activeMatchEdit,
+    setActiveMatchEdit,
+    venues,
+    referees,
+    photographers,
+    facilities,
+    addMatch,
     updateMatch,
     deleteMatch
   } = useApp();
@@ -70,7 +70,7 @@ export const MatchModal = () => {
 
       // Default facilities
       const defFacs = facilities.filter(f => f.isDefaultMatch).map(f => f.name);
-      setSelectedFacilities(defFacs.length > 0 ? defFacs : ['Wasit Berlisensi PSSI', 'Dokumentasi Foto HD', 'Rompi Bersih & Higienis', 'Air Mineral & Hidrasi']);
+      setSelectedFacilities(defFacs.length > 0 ? defFacs : ['Wasit Berlisensi', 'Dokumentasi Foto HD', 'Rompi Bersih & Higienis', 'Air Mineral & Hidrasi']);
       setStatus('open');
     }
   }, [activeMatchEdit, venues, referees, photographers, facilities]);
@@ -321,11 +321,10 @@ export const MatchModal = () => {
                 return (
                   <label
                     key={fac.id}
-                    className={`flex items-center gap-2 p-2 rounded-xl border cursor-pointer transition-all ${
-                      checked
+                    className={`flex items-center gap-2 p-2 rounded-xl border cursor-pointer transition-all ${checked
                         ? 'bg-white border-palette-primary text-palette-primary font-bold shadow-xs'
                         : 'bg-white/60 border-palette-subtle text-gray-600'
-                    }`}
+                      }`}
                   >
                     <input
                       type="checkbox"

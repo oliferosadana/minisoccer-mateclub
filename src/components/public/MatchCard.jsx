@@ -2,15 +2,15 @@ import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { useAuth } from '../../context/AuthContext';
 import { formatIDR } from '../../lib/supabase';
-import { 
-  Calendar, 
-  Clock, 
-  MapPin, 
-  Users, 
-  Shield, 
-  Camera, 
-  Shirt, 
-  Check, 
+import {
+  Calendar,
+  Clock,
+  MapPin,
+  Users,
+  Shield,
+  Camera,
+  Shirt,
+  Check,
   Ticket,
   ChevronRight,
   Flame,
@@ -18,14 +18,14 @@ import {
 } from 'lucide-react';
 
 export const MatchCard = ({ match }) => {
-  const { 
-    getVenueById, 
-    getRefereeById, 
-    getPhotographerById, 
-    setActiveBookingMatch, 
-    bookings, 
+  const {
+    getVenueById,
+    getRefereeById,
+    getPhotographerById,
+    setActiveBookingMatch,
+    bookings,
     setActiveTicketBooking,
-    getMatchRegisteredPlayers 
+    getMatchRegisteredPlayers
   } = useApp();
   const { currentUser } = useAuth();
 
@@ -163,7 +163,7 @@ export const MatchCard = ({ match }) => {
 
           {/* Facility Chips */}
           <div className="flex flex-wrap gap-1.5 mb-4">
-            {(match.facilities || ['Wasit Berlisensi PSSI', 'Dokumentasi Foto HD', 'Rompi Bersih', 'Air Mineral']).slice(0, 3).map((fac, idx) => (
+            {(match.facilities || ['Wasit Berlisensi', 'Dokumentasi Foto HD', 'Rompi Bersih', 'Air Mineral']).slice(0, 3).map((fac, idx) => (
               <span key={idx} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-palette-bg text-[10px] font-semibold text-gray-700 border border-palette-subtle">
                 <Check className="w-3 h-3 text-emerald-600 shrink-0" />
                 <span className="truncate max-w-[130px]">{fac}</span>
