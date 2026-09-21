@@ -35,19 +35,18 @@ pipeline {
                     echo '=== [Stage 1] Memastikan Ketersediaan Node.js & NPM Runtime ==='
                     if (isUnix()) {
                         sh '''
-                            if ! command -v node >/dev/null 2>&1 || ! command -v npm >/dev/null 2>&1; then
-                                echo "⚠️ Node.js/NPM tidak terpasang di host Jenkins. Mempersiapkan Portable Node.js 20 LTS..."
-                                mkdir -p .tools
-                                if [ ! -f .tools/node/bin/node ]; then
-                                    echo "⬇️ Mengunduh Node.js 20.18.0 Linux x64 standalone..."
-                                    curl -fsSL https://nodejs.org/dist/v20.18.0/node-v20.18.0-linux-x64.tar.gz -o .tools/node.tar.gz || \
-                                    wget -q https://nodejs.org/dist/v20.18.0/node-v20.18.0-linux-x64.tar.gz -O .tools/node.tar.gz
-                                    
-                                    mkdir -p .tools/node
-                                    tar -xzf .tools/node.tar.gz -C .tools/node --strip-components=1
-                                    rm -f .tools/node.tar.gz
-                                    echo "✅ Node.js 20 LTS berhasil dipasang di workspace!"
-                                fi
+                            NODE_VERSION="v22.14.0"
+                            mkdir -p .tools
+                            if [ ! -f .tools/node/bin/node ] || [ "$(.tools/node/bin/node -v 2>/dev/null)" != "$NODE_VERSION" ]; then
+                                echo "⬇️ Mengunduh Node.js $NODE_VERSION Linux x64 standalone..."
+                                rm -rf .tools/node .tools/node.tar.gz
+                                mkdir -p .tools/node
+                                curl -fsSL "https://nodejs.org/dist/${NODE_VERSION}/node-${NODE_VERSION}-linux-x64.tar.gz" -o .tools/node.tar.gz || \
+                                wget -q "https://nodejs.org/dist/${NODE_VERSION}/node-${NODE_VERSION}-linux-x64.tar.gz" -O .tools/node.tar.gz
+                                
+                                tar -xzf .tools/node.tar.gz -C .tools/node --strip-components=1
+                                rm -f .tools/node.tar.gz
+                                echo "✅ Node.js $NODE_VERSION LTS berhasil dipasang di workspace!"
                             fi
 
                             export PATH="${WORKSPACE}/.tools/node/bin:$PATH"
@@ -72,10 +71,10 @@ pipeline {
                     if (isUnix()) {
                         sh '''
                             export PATH="${WORKSPACE}/.tools/node/bin:$PATH"
-                            npm ci || npm install
+                            npm install --include=optional
                         '''
                     } else {
-                        bat 'npm ci || npm install'
+                        bat 'npm install --include=optional'
                     }
                 }
             }
