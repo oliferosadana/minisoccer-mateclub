@@ -60,7 +60,9 @@ export const TopUpModal = () => {
   const timerRef = useRef(null);
 
   const baseTopUp = isCustom ? (Number(customAmount) || 0) : selectedAmount;
-  const totalPayable = baseTopUp + uniqueCode;
+  const isAutoPayment = paymentMethod === 'qris';
+  const effectiveUniqueCode = isAutoPayment ? uniqueCode : 0;
+  const totalPayable = baseTopUp + effectiveUniqueCode;
 
   const gopayConfig = paymentGateways?.find(p => p.provider === 'gopay') || {
     serverUrl: 'https://gopay.masondo.dev',
@@ -183,11 +185,15 @@ export const TopUpModal = () => {
 
   const handleTopUpSuccess = async () => {
     if (!currentUser) return;
-    // Credit entire totalPayable (base + uniqueCode) to user's wallet
+    const desc = isAutoPayment
+      ? `Top Up Saldo Dompet via QRIS Dinamis GoPay (+Kode Unik Rp ${effectiveUniqueCode})`
+      : `Top Up Saldo Dompet via ${(activeBanks.find(b => b.id === paymentMethod)?.bankName || paymentMethod).toUpperCase()}`;
+
+    // Credit entire totalPayable to user's wallet
     await creditUserBalance(
       currentUser.id,
       totalPayable,
-      `Top Up Saldo Dompet via ${paymentMethod === 'qris' ? 'QRIS Dinamis GoPay' : (activeBanks.find(b => b.id === paymentMethod)?.bankName || paymentMethod).toUpperCase()} (+Kode Unik Rp ${uniqueCode})`,
+      desc,
       `TOP-${Date.now().toString().slice(-6)}`
     );
 
@@ -438,16 +444,20 @@ export const TopUpModal = () => {
                   <span>Nominal Top Up:</span>
                   <span className="font-mono font-bold">{formatIDR(baseTopUp)}</span>
                 </div>
-                <div className="flex justify-between items-center text-emerald-800 bg-emerald-50/80 px-2.5 py-1.5 rounded-lg border border-emerald-200">
-                  <div className="flex items-center gap-1">
-                    <Sparkles className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                    <span className="font-bold">Kode Unik Transaksi:</span>
+                {isAutoPayment && effectiveUniqueCode > 0 && (
+                  <div className="flex justify-between items-center text-emerald-800 bg-emerald-50/80 px-2.5 py-1.5 rounded-lg border border-emerald-200">
+                    <div className="flex items-center gap-1">
+                      <Sparkles className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                      <span className="font-bold">Kode Unik Transaksi:</span>
+                    </div>
+                    <strong className="font-mono text-emerald-800 font-extrabold">+{effectiveUniqueCode}</strong>
                   </div>
-                  <strong className="font-mono text-emerald-800 font-extrabold">+{uniqueCode}</strong>
-                </div>
-                <div className="text-[10px] text-emerald-700 font-semibold">
-                  *Kelebihan kode unik (+Rp {uniqueCode}) akan 100% ikut masuk ke saldo Anda (Total Masuk Saldo: {formatIDR(totalPayable)}).
-                </div>
+                )}
+                {isAutoPayment && effectiveUniqueCode > 0 && (
+                  <div className="text-[10px] text-emerald-700 font-semibold">
+                    *Kelebihan kode unik (+Rp {effectiveUniqueCode}) akan 100% ikut masuk ke saldo Anda (Total Masuk Saldo: {formatIDR(totalPayable)}).
+                  </div>
+                )}
                 <div className="pt-2 border-t border-palette-subtle flex justify-between items-center font-bold">
                   <span className="text-palette-dark font-extrabold text-xs">Total yang Harus Ditransfer:</span>
                   <div className="flex items-center gap-2">
@@ -612,10 +622,10 @@ export const TopUpModal = () => {
                         )}
                         <div className="p-2.5 bg-amber-50/90 rounded-xl border border-amber-200 text-amber-900 space-y-1">
                           <div className="font-bold flex items-center gap-1 text-[11px]">
-                            <span>⚠️ Transfer Tepat {formatIDR(totalPayable)}</span>
+                            <span>⚠️ Transfer Nominal Pas: {formatIDR(baseTopUp)}</span>
                           </div>
                           <p className="text-[10px] leading-relaxed text-amber-800">
-                            Sertakan 3-digit kode unik (<strong>+{uniqueCode}</strong>). Seluruh nominal transfer beserta kode unik otomatis masuk 100% ke saldo akun Anda.
+                            Mohon transfer sejumlah nominal pas tanpa kode unik ke nomor rekening di atas, lalu lampirkan bukti transfer agar segera diverifikasi oleh Admin.
                           </p>
                         </div>
                       </div>

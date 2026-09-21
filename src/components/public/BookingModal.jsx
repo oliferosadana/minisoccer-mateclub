@@ -95,14 +95,19 @@ export const BookingModal = () => {
   // Wallet deduction calculation
   const userBalance = Number(currentUser?.balance || 0);
   const isWalletPaymentMode = paymentMethod === 'wallet';
+  const isAutoPayment = paymentMethod === 'qris';
   const walletDeduction = isWalletPaymentMode
     ? Math.min(userBalance, baseFee)
     : (useWallet ? Math.min(userBalance, baseFee) : 0);
   const remainingBaseFee = Math.max(0, baseFee - walletDeduction);
   const isFullWalletPay = isWalletPaymentMode && userBalance >= baseFee;
 
-  // Total payable with unique transaction code (0 if fully paid by wallet)
-  const totalPayable = isFullWalletPay ? 0 : (remainingBaseFee + uniqueCode);
+  // Kode unik HANYA berlaku untuk metode otomatis (QRIS) agar sistem bot/crawler membedakan transaksi.
+  // Kode unik TIDAK berlaku untuk verifikasi manual (Transfer Bank / Tunai) atau pembayaran penuh via Wallet.
+  const effectiveUniqueCode = (isAutoPayment && !isFullWalletPay && remainingBaseFee > 0) ? uniqueCode : 0;
+
+  // Total payable (0 if fully paid by wallet, pas remainingBaseFee if manual, +uniqueCode only for QRIS)
+  const totalPayable = isFullWalletPay ? 0 : (remainingBaseFee + effectiveUniqueCode);
 
   // Sync with current user & generate new 3-digit unique code (max 500)
   useEffect(() => {
@@ -223,7 +228,7 @@ export const BookingModal = () => {
       position,
       jerseySize,
       baseAmount: baseFee,
-      uniqueCode: uniqueCode,
+      uniqueCode: effectiveUniqueCode,
       amount: totalPayable,
       usedWalletBalance: walletDeduction,
       paymentMethod: method === 'qris' ? 'qris_gopay' : method,
@@ -374,8 +379,8 @@ export const BookingModal = () => {
       position,
       jerseySize,
       baseAmount: baseFee,
-      uniqueCode: uniqueCode,
-      amount: totalPayable,
+      uniqueCode: 0, // Manual transfer does not use unique code
+      amount: remainingBaseFee,
       usedWalletBalance: walletDeduction,
       paymentMethod: selectedBank.bankName,
       paymentStatus: 'waiting_verification',
@@ -693,22 +698,22 @@ export const BookingModal = () => {
                   </div>
                 )}
 
-                {paymentMethod !== 'wallet' && (
+                {isAutoPayment && effectiveUniqueCode > 0 && (
                   <div className="flex justify-between items-center text-emerald-800 bg-emerald-50/80 px-2.5 py-1.5 rounded-lg border border-emerald-200">
                     <div className="flex items-center gap-1">
                       <Sparkles className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                       <span className="font-bold">Kode Unik Transaksi:</span>
                     </div>
-                    <strong className="font-mono text-emerald-800 font-extrabold">+{uniqueCode}</strong>
+                    <strong className="font-mono text-emerald-800 font-extrabold">+{effectiveUniqueCode}</strong>
                   </div>
                 )}
 
                 {/* Cashback to wallet explanation */}
-                {paymentMethod !== 'wallet' && (
+                {isAutoPayment && effectiveUniqueCode > 0 && (
                   <div className="p-2.5 bg-emerald-50 rounded-lg border border-emerald-200/80 text-[11px] text-emerald-900 flex items-start gap-2">
                     <Sparkles className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                     <div className="leading-tight">
-                      <strong>Otomatis Masuk Saldo:</strong> Kelebihan kode unik (<strong>+{uniqueCode}</strong>) akan otomatis <strong>100% masuk ke Saldo Dompet</strong> akun Anda setelah pembayaran lunas!
+                      <strong>Otomatis Masuk Saldo:</strong> Kelebihan kode unik (<strong>+{effectiveUniqueCode}</strong>) akan otomatis <strong>100% masuk ke Saldo Dompet</strong> akun Anda setelah pembayaran lunas!
                     </div>
                   </div>
                 )}
@@ -968,7 +973,7 @@ export const BookingModal = () => {
                           </div>
                         )}
                         <div className="p-2.5 bg-amber-50/90 rounded-xl border border-amber-200 text-amber-900 text-[11px] leading-relaxed">
-                          ⚠️ <strong>PENTING:</strong> Mohon transfer sebesar <strong>{formatIDR(totalPayable)}</strong> (termasuk 3-digit kode unik <strong>+{uniqueCode}</strong>), lalu lampirkan bukti transfer di bawah ini agar diverifikasi oleh Admin.
+                          ⚠️ <strong>PENTING:</strong> Mohon transfer sesuai nominal pas sebesar <strong>{formatIDR(remainingBaseFee)}</strong> ke nomor rekening di atas, lalu lampirkan foto/struk bukti transfer di bawah ini agar segera diverifikasi oleh Admin.
                         </div>
                       </div>
 
