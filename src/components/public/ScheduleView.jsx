@@ -28,8 +28,15 @@ export const ScheduleView = () => {
   const [selectedVenue, setSelectedVenue] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Statistics calculation for live badges
-  const openMatches = matches.filter(m => m.status === 'open');
+  // Statistics calculation for live badges & nearest upcoming match
+  const openMatches = matches
+    .filter(m => m.status === 'open')
+    .sort((a, b) => {
+      const dateA = new Date(a.date || '9999-12-31').getTime();
+      const dateB = new Date(b.date || '9999-12-31').getTime();
+      return dateA - dateB;
+    });
+
   const totalOpenSlots = openMatches.reduce((acc, m) => {
     const filled = Array.isArray(m.registeredPlayers) ? m.registeredPlayers.length : 0;
     const total = m.totalSlots || 24;
