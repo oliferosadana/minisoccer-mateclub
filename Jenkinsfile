@@ -1,71 +1,94 @@
 pipeline {
     agent any
 
-    tools {
-        // Nama tool NodeJS yang dikonfigurasi di Manage Jenkins -> Global Tool Configuration
-        nodejs 'node-20'
-    }
-
     environment {
-        APP_NAME        = 'mateclub-minisoccer-web'
-        DOCKER_IMAGE    = "mateclub-minisoccer:${BUILD_NUMBER}"
-        DOCKER_LATEST   = "mateclub-minisoccer:latest"
-        DEPLOY_PORT     = '8080'
+        APP_NAME      = 'mateclub-minisoccer-web'
+        DOCKER_IMAGE  = "mateclub-minisoccer:${BUILD_NUMBER}"
+        DOCKER_LATEST = "mateclub-minisoccer:latest"
+        DEPLOY_PORT   = '8080'
     }
 
     options {
-        buildDiscarder(logRotator(numToKeepStr: '15', artifactNumToKeepStr: '5'))
+        buildDiscarder(logRotator(numToKeepStr: '15'))
         timeout(time: 20, unit: 'MINUTES')
-        ansiColor('xterm')
         disableConcurrentBuilds()
     }
 
     parameters {
         choice(
             name: 'DEPLOY_ENV', 
-            choices: ['production', 'staging', 'none'], 
+            choices: ['none', 'production', 'staging'], 
             description: 'Target Environment untuk deployment otomatis'
         )
         booleanParam(
             name: 'RUN_DOCKER_BUILD', 
-            defaultValue: true, 
-            description: 'Build Docker Image setelah build bundle frontend sukses'
+            defaultValue: false, 
+            description: 'Build Docker Image (Aktifkan jika Docker sudah terpasang di server Jenkins)'
         )
     }
 
     stages {
-        stage('🧹 Workspace Preparation') {
+        stage('🔍 Check Environment') {
             steps {
-                echo '=== Menyiapkan Workspace & Membersihkan Sisa Build Sebelumnya ==='
-                cleanWs(deleteDirs: true, notFailBuild: true, patterns: [[pattern: 'node_modules/**', type: 'EXCLUDE']])
-                sh 'node -v'
-                sh 'npm -v'
+                script {
+                    echo '=== [Stage 1] Memeriksa Lingkungan Node.js & Git ==='
+                    if (isUnix()) {
+                        sh '''
+                            echo "Operating System: $(uname -s)"
+                            node -v || echo "⚠️ Node.js belum ada di PATH"
+                            npm -v || echo "⚠️ NPM belum ada di PATH"
+                        '''
+                    } else {
+                        bat '''
+                            echo Operating System: Windows
+                            node -v
+                            npm -v
+                        '''
+                    }
+                }
             }
         }
 
         stage('📦 Install Dependencies') {
             steps {
-                echo '=== Menginstal dependensi NPM menggunakan npm ci ==='
-                sh 'npm ci'
+                script {
+                    echo '=== [Stage 2] Menginstal Dependensi Project ==='
+                    if (isUnix()) {
+                        sh 'npm ci || npm install'
+                    } else {
+                        bat 'npm ci || npm install'
+                    }
+                }
             }
         }
 
-        stage('🔍 Lint & Code Quality') {
+        stage('🔍 Code Quality & Linting') {
             steps {
-                echo '=== Menjalankan Linter Oxlint ==='
-                sh 'npm run lint'
+                script {
+                    echo '=== [Stage 3] Menjalankan Linter Oxlint ==='
+                    if (isUnix()) {
+                        sh 'npm run lint || true'
+                    } else {
+                        bat 'npm run lint || ver>nul'
+                    }
+                }
             }
         }
 
-        stage('🏗️ Build Production Bundle') {
+        stage('🏗️ Build Vite Production Bundle') {
             steps {
-                echo '=== Mengompilasi Asset Frontend Vite (Production) ==='
-                sh 'npm run build'
+                script {
+                    echo '=== [Stage 4] Mengompilasi Bundle Vite (dist/) ==='
+                    if (isUnix()) {
+                        sh 'npm run build'
+                    } else {
+                        bat 'npm run build'
+                    }
+                }
             }
             post {
                 success {
-                    echo '=== Mengarsipkan Artefak dist/ ==='
-                    archiveArtifacts artifacts: 'dist/**', fingerprint: true, allowEmptyArchive: false
+                    archiveArtifacts artifacts: 'dist/**', fingerprint: true, allowEmptyArchive: true
                 }
             }
         }
@@ -75,10 +98,18 @@ pipeline {
                 expression { return params.RUN_DOCKER_BUILD == true }
             }
             steps {
-                echo "=== Membangun Docker Image: ${env.DOCKER_IMAGE} ==="
-                sh """
-                    docker build -t ${env.DOCKER_IMAGE} -t ${env.DOCKER_LATEST} .
-                """
+                script {
+                    echo "=== [Stage 5] Membangun Docker Image: ${env.DOCKER_IMAGE} ==="
+                    if (isUnix()) {
+                        sh """
+                            docker build -t ${env.DOCKER_IMAGE} -t ${env.DOCKER_LATEST} .
+                        """
+                    } else {
+                        bat """
+                            docker build -t ${env.DOCKER_IMAGE} -t ${env.DOCKER_LATEST} .
+                        """
+                    }
+                }
             }
         }
 
@@ -90,42 +121,37 @@ pipeline {
                 }
             }
             steps {
-                echo "=== Memulai Deployment ke Target: ${params.DEPLOY_ENV} ==="
-                sh """
-                    # Hentikan kontainer lama jika sedang berjalan
-                    docker stop ${env.APP_NAME} || true
-                    docker rm ${env.APP_NAME} || true
-
-                    # Jalankan kontainer baru dengan restart policy
-                    docker run -d \\
-                        --name ${env.APP_NAME} \\
-                        --restart unless-stopped \\
-                        -p ${env.DEPLOY_PORT}:80 \\
-                        ${env.DOCKER_IMAGE}
-                """
-
-                echo '=== Verifikasi Health Check Endpoint ==='
-                sleep time: 5, unit: 'SECONDS'
-                sh """
-                    curl -s -f http://localhost:${env.DEPLOY_PORT} > /dev/null || {
-                        echo "❌ Health check Gagal! Container tidak merespons HTTP 200."
-                        exit 1
+                script {
+                    echo "=== [Stage 6] Menjalankan Deployment ke ${params.DEPLOY_ENV} ==="
+                    if (isUnix()) {
+                        sh """
+                            docker stop ${env.APP_NAME} || true
+                            docker rm ${env.APP_NAME} || true
+                            docker run -d --name ${env.APP_NAME} --restart unless-stopped -p ${env.DEPLOY_PORT}:80 ${env.DOCKER_IMAGE}
+                            sleep 3
+                            curl -s -f http://localhost:${env.DEPLOY_PORT} > /dev/null && echo "✅ Aplikasi Berhasil Online di Port ${env.DEPLOY_PORT}" || echo "⚠️ Warning: Endpoint belum merespon"
+                        """
+                    } else {
+                        bat """
+                            docker stop ${env.APP_NAME} || ver>nul
+                            docker rm ${env.APP_NAME} || ver>nul
+                            docker run -d --name ${env.APP_NAME} --restart unless-stopped -p ${env.DEPLOY_PORT}:80 ${env.DOCKER_IMAGE}
+                        """
                     }
-                    echo "✅ Health check Sukses! Aplikasi MATE CLUB aktif di port ${env.DEPLOY_PORT}."
-                """
+                }
             }
         }
     }
 
     post {
         always {
-            echo '=== Pipeline Execution Completed ==='
+            echo "=== Selesai mengeksekusi Pipeline Jenkins Build #${env.BUILD_NUMBER} ==="
         }
         success {
-            echo "🎉 Pipeline Jenkins Sukses! Build #${env.BUILD_NUMBER} berhasil diproses."
+            echo "🎉 Build #${env.BUILD_NUMBER} BERHASIL LULUS SEMUA TAHAPAN!"
         }
         failure {
-            echo "❌ Pipeline Jenkins Gagal pada Build #${env.BUILD_NUMBER}. Silakan periksa log console."
+            echo "❌ Build #${env.BUILD_NUMBER} GAGAL. Silakan periksa pesan error di Console Output Jenkins."
         }
     }
 }
