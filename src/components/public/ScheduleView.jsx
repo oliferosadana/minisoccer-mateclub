@@ -73,7 +73,7 @@ export const ScheduleView = () => {
         {/* Cinematic Stadium Background Image with Dynamic Lighting Overlay */}
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-1000 scale-105"
-          style={{ backgroundImage: `url('/images/hero-stadium.jpg')` }}
+          style={{ backgroundImage: `url('https://i.pinimg.com/1200x/fe/6d/14/fe6d1PbWWqgKDBDorh525uecKaGZD21FGSoCeR.jpg'), url('/images/hero-stadium.jpg')` }}
         />
         {/* Layered Gradient & Vignette Overlay for High Readability & Contrast */}
         <div className="absolute inset-0 bg-gradient-to-r from-[#061220]/95 via-[#071526]/85 to-[#071322]/50 backdrop-blur-[0.5px]" />
