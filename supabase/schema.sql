@@ -16,6 +16,7 @@ create table if not exists public.users (
   preferred_position text default 'Pemain Lapangan',
   club_origin text default 'Komunitas MATE CLUB',
   jersey_number text default '10',
+  balance numeric default 0,
   caps int default 0,
   goals int default 0,
   mvp_count int default 0,
@@ -226,6 +227,19 @@ create table if not exists public.whatsapp_gateways (
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
+-- 14. WALLET TRANSACTIONS (MUTASI SALDO & DOMPET MATE)
+create table if not exists public.wallet_transactions (
+  id text primary key,
+  user_id text references public.users(id) on delete cascade,
+  phone text not null,
+  type text not null check (type in ('credit', 'debit')),
+  amount numeric not null,
+  description text,
+  booking_id text,
+  balance_after numeric not null default 0,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
 -- =========================================================================
 -- ROW LEVEL SECURITY (RLS) POLICIES
 -- =========================================================================
@@ -242,6 +256,7 @@ alter table public.standings_clubs enable row level security;
 alter table public.top_performers enable row level security;
 alter table public.payment_gateways enable row level security;
 alter table public.whatsapp_gateways enable row level security;
+alter table public.wallet_transactions enable row level security;
 
 -- PUBLIC READ & INSERT POLICIES
 create policy "Allow all on users" on public.users for all using (true) with check (true);
@@ -257,6 +272,7 @@ create policy "Allow all on standings_clubs" on public.standings_clubs for all u
 create policy "Allow all on top_performers" on public.top_performers for all using (true) with check (true);
 create policy "Allow all on payment_gateways" on public.payment_gateways for all using (true) with check (true);
 create policy "Allow all on whatsapp_gateways" on public.whatsapp_gateways for all using (true) with check (true);
+create policy "Allow all on wallet_transactions" on public.wallet_transactions for all using (true) with check (true);
 
 -- REALTIME REPLICATION PUBLICATION
 alter publication supabase_realtime add table public.users;
@@ -268,3 +284,5 @@ alter publication supabase_realtime add table public.sponsors;
 alter publication supabase_realtime add table public.community_posts;
 alter publication supabase_realtime add table public.payment_gateways;
 alter publication supabase_realtime add table public.whatsapp_gateways;
+alter publication supabase_realtime add table public.wallet_transactions;
+
