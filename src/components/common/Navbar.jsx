@@ -155,7 +155,7 @@ export const Navbar = () => {
             ) : (
               <div className="flex items-center gap-1.5">
                 <button
-                  onClick={openLogin}
+                  onClick={() => openLogin()}
                   className="flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-lg text-palette-primary hover:bg-palette-subtle/40 transition-all"
                 >
                   <LogIn className="w-3.5 h-3.5" /> Masuk

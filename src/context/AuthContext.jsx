@@ -759,7 +759,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   const openLogin = (presetIdentifier = '') => {
-    setPrefilledIdentifier(presetIdentifier);
+    // If called directly from an event handler (e.g. onClick={openLogin}), presetIdentifier is a React SyntheticEvent object
+    const safeIdentifier = (typeof presetIdentifier === 'string') ? presetIdentifier : '';
+    setPrefilledIdentifier(safeIdentifier);
     setAuthMode('login');
     setIsAuthModalOpen(true);
   };

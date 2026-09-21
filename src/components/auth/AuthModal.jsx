@@ -72,8 +72,10 @@ export const AuthModal = () => {
   useEffect(() => {
     if (isAuthModalOpen) {
       setErrorMessage('');
-      if (prefilledIdentifier) {
-        setIdentifier(prefilledIdentifier);
+      if (typeof prefilledIdentifier === 'string' && prefilledIdentifier.trim() !== '') {
+        setIdentifier(prefilledIdentifier.trim());
+      } else {
+        setIdentifier('');
       }
     }
   }, [isAuthModalOpen, prefilledIdentifier]);
