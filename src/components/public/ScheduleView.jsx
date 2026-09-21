@@ -1,3 +1,6 @@
+import React, { useState } from 'react';
+import { useApp } from '../../context/AppContext';
+import { MatchCard } from './MatchCard';
 import { 
   Calendar, 
   Search, 
