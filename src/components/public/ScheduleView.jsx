@@ -22,33 +22,49 @@ import {
 } from 'lucide-react';
 
 export const ScheduleView = () => {
-  const { matches, venues, setPublicTab, setActiveBookingMatch, getVenueById } = useApp();
+  const { matches, venues, setPublicTab, setActiveBookingMatch, getVenueById, getMatchRegisteredPlayers } = useApp();
 
   const [typeFilter, setTypeFilter] = useState('all'); // 'all' | 'fun_football' | 'sparring' | 'trofeo'
   const [selectedVenue, setSelectedVenue] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Statistics calculation for live badges & nearest upcoming match
+  // Robust slot and player counting helper
+  const getMatchTotalSlots = (m) => {
+    if (!m) return 24;
+    return Number(m.totalSlots || m.total_slots || (Number(m.playerSlots || 22) + Number(m.gkSlots || 2)) || 24);
+  };
+
+  const getMatchFilledCount = (m) => {
+    if (!m) return 0;
+    if (typeof getMatchRegisteredPlayers === 'function') {
+      const p = getMatchRegisteredPlayers(m.id);
+      if (Array.isArray(p)) return p.length;
+    }
+    const rawList = m.registeredPlayers || m.registered_players;
+    return Array.isArray(rawList) ? rawList.length : 0;
+  };
+
+  // Filter open matches and sort chronologically
   const openMatches = matches
-    .filter(m => m.status === 'open')
+    .filter(m => !m.status || m.status.toLowerCase() === 'open')
     .sort((a, b) => {
       const dateA = new Date(a.date || '9999-12-31').getTime();
       const dateB = new Date(b.date || '9999-12-31').getTime();
       return dateA - dateB;
     });
 
-  const totalOpenSlots = openMatches.reduce((acc, m) => {
-    const filled = Array.isArray(m.registeredPlayers) ? m.registeredPlayers.length : 0;
-    const total = m.totalSlots || 24;
+  // Total open slots across upcoming open matches
+  const targetMatchesForCount = openMatches.length > 0 ? openMatches : matches;
+  const totalOpenSlots = targetMatchesForCount.reduce((acc, m) => {
+    const total = getMatchTotalSlots(m);
+    const filled = getMatchFilledCount(m);
     return acc + Math.max(0, total - filled);
   }, 0);
 
   const nextFeaturedMatch = openMatches[0] || matches[0];
   const featuredVenue = nextFeaturedMatch ? getVenueById(nextFeaturedMatch.fieldId) : null;
-  const featuredFilled = nextFeaturedMatch && Array.isArray(nextFeaturedMatch.registeredPlayers) 
-    ? nextFeaturedMatch.registeredPlayers.length 
-    : 0;
-  const featuredTotal = nextFeaturedMatch ? (nextFeaturedMatch.totalSlots || 24) : 24;
+  const featuredTotal = nextFeaturedMatch ? getMatchTotalSlots(nextFeaturedMatch) : 24;
+  const featuredFilled = nextFeaturedMatch ? getMatchFilledCount(nextFeaturedMatch) : 0;
   const featuredRemaining = Math.max(0, featuredTotal - featuredFilled);
   const featuredProgress = Math.min(100, Math.round((featuredFilled / featuredTotal) * 100));
 
