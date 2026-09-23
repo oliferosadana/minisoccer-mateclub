@@ -1,7 +1,14 @@
 import React from 'react';
-import { ShieldCheck, Heart, Sparkles } from 'lucide-react';
+import { useApp } from '../../context/AppContext';
+import { ShieldCheck, Heart, MapPin } from 'lucide-react';
 
 export const Footer = () => {
+  const { venues } = useApp();
+
+  const activeVenues = (venues && venues.length > 0)
+    ? venues.filter(v => !v.status || v.status === 'active')
+    : [];
+
   return (
     <footer className="bg-palette-dark text-white border-t border-palette-darker mt-16 pt-10 pb-8 text-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -24,12 +31,36 @@ export const Footer = () => {
           </div>
 
           <div>
-            <h4 className="font-bold text-sm text-palette-subtle mb-3 uppercase tracking-wider text-[11px]">Jangkauan Venue</h4>
-            <ul className="space-y-2 text-gray-300">
-              <li>Balikpapan Soccer Field (BSF)</li>
-              <li>Borneo Mini Stadium Ringroad</li>
-              <li>Batakan Mini Soccer Arena</li>
-              <li>Sepinggan Pratama Stadium</li>
+            <div className="flex items-center gap-2 mb-3">
+              <h4 className="font-bold text-sm text-palette-subtle uppercase tracking-wider text-[11px]">Jangkauan Venue</h4>
+              {/* {activeVenues.length > 0 && (
+                <span className="px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono text-[9px] font-bold border border-emerald-500/30">
+                  {activeVenues.length} Lapangan
+                </span>
+              )} */}
+            </div>
+            <ul className="space-y-2.5 text-gray-300">
+              {activeVenues.length > 0 ? (
+                activeVenues.map((v) => (
+                  <li key={v.id || v.name} className="group">
+                    <div className="flex items-start gap-1.5">
+                      <MapPin className="w-3 h-3 text-emerald-400 mt-0.5 shrink-0" />
+                      <div>
+                        <div className="font-medium text-white/95 group-hover:text-emerald-300 transition-colors">
+                          {v.name}
+                        </div>
+                        {v.location && (
+                          <div className="text-[10px] text-gray-400">
+                            {v.location}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </li>
+                ))
+              ) : (
+                <li className="text-gray-400 italic text-[11px]">Memuat daftar venue...</li>
+              )}
             </ul>
           </div>
 

@@ -124,7 +124,7 @@ export const MatchModal = () => {
       },
       dpRequired: type === 'fun_football' ? Number(playerFee) : Math.round(Number(playerFee) / 2),
       level,
-      levelBadge: level.includes('Casual') ? '🌟 Fun' : (level.includes('Medium') ? '⚡ Medium' : '🏆 Kompetitif'),
+      levelBadge: level.includes('Casual') ? 'Fun' : (level.includes('Medium') ? 'Medium' : '🏆 Kompetitif'),
       facilities: selectedFacilities,
       totalSlots: Number(totalSlots),
       playerSlots: Number(playerSlots),
@@ -322,8 +322,8 @@ export const MatchModal = () => {
                   <label
                     key={fac.id}
                     className={`flex items-center gap-2 p-2 rounded-xl border cursor-pointer transition-all ${checked
-                        ? 'bg-white border-palette-primary text-palette-primary font-bold shadow-xs'
-                        : 'bg-white/60 border-palette-subtle text-gray-600'
+                      ? 'bg-white border-palette-primary text-palette-primary font-bold shadow-xs'
+                      : 'bg-white/60 border-palette-subtle text-gray-600'
                       }`}
                   >
                     <input

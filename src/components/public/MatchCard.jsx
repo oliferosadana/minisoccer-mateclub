@@ -71,9 +71,9 @@ export const MatchCard = ({ match }) => {
           {/* Type & Level Badges */}
           <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
             <span className="px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-palette-primary text-white shadow-xs">
-              {isSolo && '⚽ Open Play Solo'}
-              {isSparring && '⚔️ Sparring 2 Tim'}
-              {isTrofeo && '🏆 Trofeo 3 Tim'}
+              {isSolo && 'Open Play Solo'}
+              {isSparring && 'Sparring 2 Tim'}
+              {isTrofeo && 'Trofeo 3 Tim'}
             </span>
             <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-black/60 backdrop-blur-md text-white border border-white/20">
               {match.levelBadge || '⚡ Medium'}

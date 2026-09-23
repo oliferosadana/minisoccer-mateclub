@@ -576,8 +576,8 @@ export const BookingModal = () => {
                     {/* Pemain Lapangan */}
                     <label
                       className={`p-3 rounded-xl border-2 cursor-pointer transition-all flex flex-col justify-between ${position === 'Pemain Lapangan'
-                          ? 'border-palette-primary bg-palette-primary/5 text-palette-dark shadow-xs'
-                          : 'border-palette-subtle bg-white text-gray-600 hover:border-gray-300'
+                        ? 'border-palette-primary bg-palette-primary/5 text-palette-dark shadow-xs'
+                        : 'border-palette-subtle bg-white text-gray-600 hover:border-gray-300'
                         }`}
                     >
                       <div className="flex items-center justify-between mb-2">
@@ -604,8 +604,8 @@ export const BookingModal = () => {
                     {/* Penjaga Gawang (Kiper) */}
                     <label
                       className={`p-3 rounded-xl border-2 cursor-pointer transition-all flex flex-col justify-between ${position === 'Penjaga Gawang'
-                          ? 'border-emerald-600 bg-emerald-50/50 text-palette-dark shadow-xs'
-                          : 'border-palette-subtle bg-white text-gray-600 hover:border-gray-300'
+                        ? 'border-emerald-600 bg-emerald-50/50 text-palette-dark shadow-xs'
+                        : 'border-palette-subtle bg-white text-gray-600 hover:border-gray-300'
                         }`}
                     >
                       <div className="flex items-center justify-between mb-2">
@@ -649,8 +649,8 @@ export const BookingModal = () => {
                         key={size}
                         onClick={() => setJerseySize(size)}
                         className={`py-2 px-1 text-center font-black text-xs rounded-xl border transition-all cursor-pointer ${jerseySize === size
-                            ? 'bg-palette-primary text-white border-palette-primary shadow-xs ring-2 ring-palette-primary/30'
-                            : 'bg-palette-bg/60 text-palette-dark border-palette-subtle hover:bg-white hover:border-palette-primary/50'
+                          ? 'bg-palette-primary text-white border-palette-primary shadow-xs ring-2 ring-palette-primary/30'
+                          : 'bg-palette-bg/60 text-palette-dark border-palette-subtle hover:bg-white hover:border-palette-primary/50'
                           }`}
                       >
                         {size}
@@ -748,8 +748,8 @@ export const BookingModal = () => {
                       setUseWallet(true);
                     }}
                     className={`p-2 rounded-xl border text-center font-bold text-[11px] transition-all flex flex-col items-center gap-1 cursor-pointer ${paymentMethod === 'wallet'
-                        ? 'border-emerald-600 bg-emerald-50 text-emerald-800 ring-1 ring-emerald-600'
-                        : 'border-palette-subtle bg-white text-gray-600 hover:border-gray-300'
+                      ? 'border-emerald-600 bg-emerald-50 text-emerald-800 ring-1 ring-emerald-600'
+                      : 'border-palette-subtle bg-white text-gray-600 hover:border-gray-300'
                       }`}
                   >
                     <Wallet className="w-4 h-4 text-emerald-600" />
@@ -759,8 +759,8 @@ export const BookingModal = () => {
                     type="button"
                     onClick={() => setPaymentMethod('qris')}
                     className={`p-2 rounded-xl border text-center font-bold text-[11px] transition-all flex flex-col items-center gap-1 cursor-pointer ${paymentMethod === 'qris'
-                        ? 'border-palette-primary bg-palette-primary/5 text-palette-primary ring-1 ring-palette-primary'
-                        : 'border-palette-subtle bg-white text-gray-600 hover:border-gray-300'
+                      ? 'border-palette-primary bg-palette-primary/5 text-palette-primary ring-1 ring-palette-primary'
+                      : 'border-palette-subtle bg-white text-gray-600 hover:border-gray-300'
                       }`}
                   >
                     <QrCode className="w-4 h-4" />
@@ -772,8 +772,8 @@ export const BookingModal = () => {
                       type="button"
                       onClick={() => setPaymentMethod(bank.id)}
                       className={`p-2 rounded-xl border text-center font-bold text-[11px] transition-all flex flex-col items-center gap-1 cursor-pointer ${paymentMethod === bank.id
-                          ? 'border-palette-primary bg-palette-primary/5 text-palette-primary ring-1 ring-palette-primary'
-                          : 'border-palette-subtle bg-white text-gray-600 hover:border-gray-300'
+                        ? 'border-palette-primary bg-palette-primary/5 text-palette-primary ring-1 ring-palette-primary'
+                        : 'border-palette-subtle bg-white text-gray-600 hover:border-gray-300'
                         }`}
                     >
                       <CreditCard className="w-4 h-4" />
@@ -1061,16 +1061,15 @@ export const BookingModal = () => {
                         type="button"
                         onClick={handleManualBankSubmit}
                         disabled={isSubmittingProof}
-                        className={`w-full py-3 px-4 font-black text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer ${
-                          proofImage
+                        className={`w-full py-3 px-4 font-black text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer ${proofImage
                             ? 'bg-palette-primary hover:bg-palette-primaryDark text-white shadow-palette-primary/20'
                             : 'bg-gray-200 text-gray-500 hover:bg-gray-300'
-                        }`}
+                          }`}
                       >
                         <UploadCloud className="w-4 h-4" />
                         <span>
-                          {proofImage 
-                            ? `Kirim Bukti Pembayaran (${formatIDR(totalPayable)})` 
+                          {proofImage
+                            ? `Kirim Bukti Pembayaran (${formatIDR(totalPayable)})`
                             : 'Lampirkan Bukti Transfer untuk Melanjutkan'}
                         </span>
                       </button>
@@ -1107,8 +1106,8 @@ export const BookingModal = () => {
                   {createdBooking.paymentMethod === 'wallet'
                     ? 'Pembayaran berhasil dipotong langsung dari Saldo Dompet MATE CLUB.'
                     : createdBooking.paymentStatus === 'paid'
-                    ? 'Status pemain Anda telah resmi terverifikasi LUNAS otomatis.'
-                    : 'Slot Anda telah diamankan. Pembayaran sedang diverifikasi oleh sistem.'}
+                      ? 'Status pemain Anda telah resmi terverifikasi LUNAS otomatis.'
+                      : 'Slot Anda telah diamankan. Pembayaran sedang diverifikasi oleh sistem.'}
                 </p>
               </div>
 
@@ -1117,8 +1116,8 @@ export const BookingModal = () => {
                 <div className="flex justify-between items-center border-b border-palette-subtle pb-2">
                   <span className="font-bold text-palette-dark">E-Ticket MATE CLUB</span>
                   <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black ${createdBooking.paymentStatus === 'paid'
-                      ? 'bg-emerald-100 text-emerald-800'
-                      : 'bg-amber-100 text-amber-800'
+                    ? 'bg-emerald-100 text-emerald-800'
+                    : 'bg-amber-100 text-amber-800'
                     }`}>
                     {createdBooking.paymentStatus === 'paid' ? '✓ Lunas & Terverifikasi' : 'Menunggu Verifikasi'}
                   </span>

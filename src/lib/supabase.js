@@ -76,7 +76,6 @@ export async function upsertUserToSupabase(user) {
       name: user.name,
       phone: user.phone,
       email: user.email,
-      password: user.password,
       role: user.role || 'player',
       preferred_position: user.preferredPosition || 'Pemain Lapangan',
       club_origin: user.clubOrigin || 'Komunitas MATE CLUB',
@@ -93,6 +92,21 @@ export async function upsertUserToSupabase(user) {
     return data;
   } catch (err) {
     console.warn('[Supabase] Failed to upsert user:', err.message);
+    return null;
+  }
+}
+
+export async function lookupTicketFromSupabase(ticketCode, phone = null) {
+  if (!supabase || !ticketCode) return null;
+  try {
+    const { data, error } = await supabase.rpc('lookup_ticket', {
+      p_ticket_code: ticketCode.trim(),
+      p_phone: phone ? phone.trim() : null
+    });
+    if (error) throw error;
+    return Array.isArray(data) && data.length > 0 ? data[0] : null;
+  } catch (err) {
+    console.warn('[Supabase] Failed to lookup ticket securely via RPC:', err.message);
     return null;
   }
 }

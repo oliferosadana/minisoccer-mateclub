@@ -11,7 +11,6 @@ create table if not exists public.users (
   name text not null,
   phone text not null unique,
   email text,
-  password text not null default 'player123',
   role text default 'player' check (role in ('player', 'admin', 'superadmin', 'referee', 'photographer')),
   preferred_position text default 'Pemain Lapangan',
   club_origin text default 'Komunitas MATE CLUB',
@@ -258,21 +257,85 @@ alter table public.payment_gateways enable row level security;
 alter table public.whatsapp_gateways enable row level security;
 alter table public.wallet_transactions enable row level security;
 
--- PUBLIC READ & INSERT POLICIES
-create policy "Allow all on users" on public.users for all using (true) with check (true);
-create policy "Allow all on venues" on public.venues for all using (true) with check (true);
-create policy "Allow all on referees" on public.referees for all using (true) with check (true);
-create policy "Allow all on photographers" on public.photographers for all using (true) with check (true);
-create policy "Allow all on facilities" on public.facilities for all using (true) with check (true);
-create policy "Allow all on matches" on public.matches for all using (true) with check (true);
-create policy "Allow all on bookings" on public.bookings for all using (true) with check (true);
-create policy "Allow all on sponsors" on public.sponsors for all using (true) with check (true);
-create policy "Allow all on community_posts" on public.community_posts for all using (true) with check (true);
-create policy "Allow all on standings_clubs" on public.standings_clubs for all using (true) with check (true);
-create policy "Allow all on top_performers" on public.top_performers for all using (true) with check (true);
-create policy "Allow all on payment_gateways" on public.payment_gateways for all using (true) with check (true);
-create policy "Allow all on whatsapp_gateways" on public.whatsapp_gateways for all using (true) with check (true);
-create policy "Allow all on wallet_transactions" on public.wallet_transactions for all using (true) with check (true);
+-- Helper function to check if current user is admin/superadmin
+create or replace function public.is_admin()
+returns boolean as $$
+begin
+  return (
+    coalesce(current_setting('request.jwt.claim.role', true), '') in ('service_role', 'supabase_admin') or
+    coalesce(auth.jwt() ->> 'role', '') in ('admin', 'superadmin') or
+    exists (
+      select 1 from public.users 
+      where (id = auth.uid()::text or phone = (auth.jwt() ->> 'phone')) 
+      and role in ('admin', 'superadmin')
+    )
+  );
+end;
+$$ language plpgsql security definer;
+
+-- 1. USERS & PROFILES (STRICT)
+create policy "Users: View own profile or admin" on public.users for select using (
+  auth.uid() is not null and (id = auth.uid()::text or public.is_admin())
+);
+create policy "Users: Update own profile or admin" on public.users for update using (
+  auth.uid() is not null and (id = auth.uid()::text or public.is_admin())
+) with check (
+  auth.uid() is not null and (id = auth.uid()::text or public.is_admin())
+);
+create policy "Users: Insert own profile or admin" on public.users for insert with check (
+  (auth.uid() is not null and id = auth.uid()::text) or public.is_admin()
+);
+create policy "Users: Delete admin only" on public.users for delete using (public.is_admin());
+
+-- 2. BOOKINGS & PASSES (STRICT)
+create policy "Bookings: View own bookings or admin" on public.bookings for select using (
+  public.is_admin() or (auth.jwt() is not null and phone = (auth.jwt() ->> 'phone'))
+);
+create policy "Bookings: Insert new booking" on public.bookings for insert with check (
+  payment_status = 'waiting_verification'
+);
+create policy "Bookings: Update admin only" on public.bookings for update using (public.is_admin()) with check (public.is_admin());
+create policy "Bookings: Delete admin only" on public.bookings for delete using (public.is_admin());
+
+-- 3. WALLET TRANSACTIONS (STRICT)
+create policy "Wallet: View own transactions or admin" on public.wallet_transactions for select using (
+  public.is_admin() or (auth.uid() is not null and user_id = auth.uid()::text)
+);
+create policy "Wallet: Insert admin/service only" on public.wallet_transactions for insert with check (public.is_admin());
+create policy "Wallet: Update admin only" on public.wallet_transactions for update using (public.is_admin());
+create policy "Wallet: Delete admin only" on public.wallet_transactions for delete using (public.is_admin());
+
+-- 4. PAYMENT & WHATSAPP GATEWAYS (ADMIN ONLY)
+create policy "Gateways: Admin access only payment_gateways" on public.payment_gateways for all using (public.is_admin()) with check (public.is_admin());
+create policy "Gateways: Admin access only whatsapp_gateways" on public.whatsapp_gateways for all using (public.is_admin()) with check (public.is_admin());
+
+-- 5. PUBLIC CATALOG (READ PUBLIC, WRITE ADMIN ONLY)
+create policy "Venues: Public read" on public.venues for select using (true);
+create policy "Venues: Admin write" on public.venues for all using (public.is_admin()) with check (public.is_admin());
+
+create policy "Referees: Public read" on public.referees for select using (true);
+create policy "Referees: Admin write" on public.referees for all using (public.is_admin()) with check (public.is_admin());
+
+create policy "Photographers: Public read" on public.photographers for select using (true);
+create policy "Photographers: Admin write" on public.photographers for all using (public.is_admin()) with check (public.is_admin());
+
+create policy "Facilities: Public read" on public.facilities for select using (true);
+create policy "Facilities: Admin write" on public.facilities for all using (public.is_admin()) with check (public.is_admin());
+
+create policy "Matches: Public read" on public.matches for select using (true);
+create policy "Matches: Admin write" on public.matches for all using (public.is_admin()) with check (public.is_admin());
+
+create policy "Sponsors: Public read" on public.sponsors for select using (true);
+create policy "Sponsors: Admin write" on public.sponsors for all using (public.is_admin()) with check (public.is_admin());
+
+create policy "Community: Public read" on public.community_posts for select using (true);
+create policy "Community: Admin write" on public.community_posts for all using (public.is_admin()) with check (public.is_admin());
+
+create policy "Standings: Public read" on public.standings_clubs for select using (true);
+create policy "Standings: Admin write" on public.standings_clubs for all using (public.is_admin()) with check (public.is_admin());
+
+create policy "Top Performers: Public read" on public.top_performers for select using (true);
+create policy "Top Performers: Admin write" on public.top_performers for all using (public.is_admin()) with check (public.is_admin());
 
 -- REALTIME REPLICATION PUBLICATION
 alter publication supabase_realtime add table public.users;
@@ -285,4 +348,22 @@ alter publication supabase_realtime add table public.community_posts;
 alter publication supabase_realtime add table public.payment_gateways;
 alter publication supabase_realtime add table public.whatsapp_gateways;
 alter publication supabase_realtime add table public.wallet_transactions;
+
+-- SECURE RPC FUNCTIONS (PUBLIC SAFE QUERIES)
+create or replace function public.lookup_ticket(p_ticket_code text, p_phone text default null)
+returns setof public.bookings
+security definer
+set search_path = public
+as $$
+begin
+  return query
+  select *
+  from public.bookings b
+  where upper(b.ticket_code) = upper(trim(p_ticket_code))
+    and (p_phone is null or b.phone like '%' || right(trim(p_phone), 8));
+end;
+$$ language plpgsql;
+
+grant execute on function public.lookup_ticket(text, text) to anon, authenticated;
+
 

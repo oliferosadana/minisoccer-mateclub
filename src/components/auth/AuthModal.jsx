@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useApp } from '../../context/AppContext';
-import { 
-  X, 
-  LogIn, 
-  UserPlus, 
-  Phone, 
-  Lock, 
-  User, 
-  Shield, 
-  Sparkles, 
-  CheckCircle2, 
-  Eye, 
-  EyeOff, 
-  KeyRound, 
-  HelpCircle, 
+import {
+  X,
+  LogIn,
+  UserPlus,
+  Phone,
+  Lock,
+  User,
+  Shield,
+  Sparkles,
+  CheckCircle2,
+  Eye,
+  EyeOff,
+  KeyRound,
+  HelpCircle,
   ArrowLeft,
   Mail,
   ShieldCheck,
@@ -22,17 +22,17 @@ import {
 } from 'lucide-react';
 
 export const AuthModal = () => {
-  const { 
-    isAuthModalOpen, 
-    authMode, 
-    setAuthMode, 
-    closeAuthModal, 
-    login, 
-    register, 
+  const {
+    isAuthModalOpen,
+    authMode,
+    setAuthMode,
+    closeAuthModal,
+    login,
+    register,
     requestPasswordResetOTP,
     verifyAndResetPassword,
     fillCredentials,
-    prefilledIdentifier 
+    prefilledIdentifier
   } = useAuth();
 
   const { showToast, setRole } = useApp();
@@ -42,7 +42,7 @@ export const AuthModal = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
-  
+
   // Register Form States
   const [regName, setRegName] = useState('');
   const [regPhone, setRegPhone] = useState('');
@@ -271,21 +271,19 @@ export const AuthModal = () => {
           <div className="flex border-b border-palette-subtle text-xs font-black bg-palette-bg shrink-0">
             <button
               onClick={() => { setAuthMode('login'); setErrorMessage(''); }}
-              className={`flex-1 py-3 text-center transition-all flex items-center justify-center gap-1.5 ${
-                authMode === 'login'
+              className={`flex-1 py-3 text-center transition-all flex items-center justify-center gap-1.5 ${authMode === 'login'
                   ? 'bg-white text-palette-primary border-b-2 border-palette-primary shadow-2xs'
                   : 'text-gray-500 hover:text-palette-dark'
-              }`}
+                }`}
             >
               <LogIn className="w-3.5 h-3.5" /> Masuk Akun
             </button>
             <button
               onClick={() => { setAuthMode('register'); setErrorMessage(''); }}
-              className={`flex-1 py-3 text-center transition-all flex items-center justify-center gap-1.5 ${
-                authMode === 'register'
+              className={`flex-1 py-3 text-center transition-all flex items-center justify-center gap-1.5 ${authMode === 'register'
                   ? 'bg-white text-palette-primary border-b-2 border-palette-primary shadow-2xs'
                   : 'text-gray-500 hover:text-palette-dark'
-              }`}
+                }`}
             >
               <UserPlus className="w-3.5 h-3.5" /> Registrasi Baru
             </button>
@@ -316,7 +314,7 @@ export const AuthModal = () => {
                   <input
                     type="text"
                     required
-                    placeholder="Contoh: 081234567890 / admin@mateclub.id"
+                    placeholder="081234567890 / user@mateclub.id"
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
                     className="w-full text-xs pl-9 pr-3 py-2.5 rounded-xl border border-palette-subtle bg-palette-bg focus:bg-white focus:border-palette-primary outline-none transition-all"
