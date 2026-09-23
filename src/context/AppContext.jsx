@@ -485,16 +485,24 @@ export const AppProvider = ({ children }) => {
     const match = matches.find(m => m.id === matchId);
     if (!match) return [];
     const matchBookings = (bookings || []).filter(b => b.matchId === matchId);
-    const rawPlayers = match.registeredPlayers || [];
+    const rawPlayers = match.registeredPlayers || match.registered_players || [];
 
     const playerMap = new Map();
     rawPlayers.forEach((p, idx) => {
-      const key = p.phone || p.id || `player-${idx}`;
-      playerMap.set(key, p);
+      const key = p.id || p.ticketCode || p.ticket_code || p.phone || `player-${idx}`;
+      playerMap.set(key, {
+        id: p.id || `RP-${idx + 1}`,
+        name: p.name || p.playerName || 'Pemain Terdaftar',
+        phone: p.phone || '-',
+        pos: p.pos || p.position || 'Pemain Lapangan',
+        jerseySize: p.jerseySize || p.jersey_size || 'L',
+        fee: p.fee || p.amount || 0,
+        status: p.status || p.paymentStatus || 'paid'
+      });
     });
 
     matchBookings.forEach((b, idx) => {
-      const key = b.phone || b.id || `booking-${idx}`;
+      const key = b.id || b.ticketCode || b.phone || `booking-${idx}`;
       if (!playerMap.has(key)) {
         playerMap.set(key, {
           id: b.id,

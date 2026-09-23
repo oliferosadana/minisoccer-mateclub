@@ -33,11 +33,11 @@ export const Footer = () => {
           <div>
             <div className="flex items-center gap-2 mb-3">
               <h4 className="font-bold text-sm text-palette-subtle uppercase tracking-wider text-[11px]">Jangkauan Venue</h4>
-              {/* {activeVenues.length > 0 && (
+              {activeVenues.length > 0 && (
                 <span className="px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono text-[9px] font-bold border border-emerald-500/30">
                   {activeVenues.length} Lapangan
                 </span>
-              )} */}
+              )}
             </div>
             <ul className="space-y-2.5 text-gray-300">
               {activeVenues.length > 0 ? (
@@ -67,10 +67,37 @@ export const Footer = () => {
           <div>
             <h4 className="font-bold text-sm text-palette-subtle mb-3 uppercase tracking-wider text-[11px]">Kontak & Bantuan</h4>
             <ul className="space-y-2 text-gray-300">
-              <li>WhatsApp Admin: 0812-5123-4567</li>
-              <li>Email: halo@mateclub.id</li>
-              <li>Instagram: @mateclub.bpp</li>
-              <li>Balikpapan, Kalimantan Timur</li>
+              <li>
+                <a
+                  href="https://wa.me/6281251234567"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hover:text-emerald-400 transition-colors flex items-center gap-1.5"
+                >
+                  <span className="text-emerald-400 font-bold">WA:</span> 0812-5123-4567
+                </a>
+              </li>
+              <li>
+                <a
+                  href="mailto:halo@mateclub.id"
+                  className="hover:text-emerald-400 transition-colors flex items-center gap-1.5"
+                >
+                  <span className="text-gray-400 font-bold">Email:</span> halo@mateclub.id
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://instagram.com/mateclub.bpp"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hover:text-purple-400 transition-colors flex items-center gap-1.5"
+                >
+                  <span className="text-purple-400 font-bold">IG:</span> @mateclub.bpp
+                </a>
+              </li>
+              <li className="text-gray-400 text-[11px] pt-1 border-t border-white/5">
+                Balikpapan, Kalimantan Timur
+              </li>
             </ul>
           </div>
         </div>
