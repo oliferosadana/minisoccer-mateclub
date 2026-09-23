@@ -184,9 +184,35 @@ export async function fetchBookingsFromSupabase() {
   }
 }
 
+export async function submitBookingRPC(booking) {
+  if (!supabase) return null;
+  try {
+    const { data, error } = await supabase.rpc('submit_booking', {
+      p_match_id: booking.matchId,
+      p_player_name: booking.playerName,
+      p_phone: booking.phone,
+      p_position: booking.position,
+      p_jersey_size: booking.jerseySize || 'L',
+      p_amount: Number(booking.amount || 0),
+      p_base_amount: Number(booking.baseAmount || booking.amount || 0),
+      p_unique_code: Number(booking.uniqueCode || 0),
+      p_payment_method: booking.paymentMethod || 'qris'
+    });
+    if (error) throw error;
+    return Array.isArray(data) && data.length > 0 ? data[0] : null;
+  } catch (err) {
+    console.warn('[Supabase] RPC submit_booking failed, falling back to upsert:', err.message);
+    return null;
+  }
+}
+
 export async function upsertBookingToSupabase(booking) {
   if (!supabase) return null;
   try {
+    // Try RPC first for safe server-side booking creation
+    const rpcResult = await submitBookingRPC(booking);
+    if (rpcResult) return rpcResult;
+
     const payload = {
       id: booking.id,
       match_id: booking.matchId,

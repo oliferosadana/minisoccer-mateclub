@@ -116,13 +116,9 @@ export const AppProvider = ({ children }) => {
             return {
               ...pg,
               serverUrl: pg.serverUrl || 'https://gopay.masondo.dev',
-              apiKey: (pg.apiKey && pg.apiKey !== 'gopay_secret_api_key_mateclub_2026') 
-                ? pg.apiKey 
-                : '382050b0c6f03386901e040efd9182b56021c43e3e2932260142cbcaf3729144',
-              merchantId: pg.merchantId && !pg.merchantId.includes('MATECLUB') ? pg.merchantId : 'ID1026519799096',
-              qrisStatic: (pg.qrisStatic && !pg.qrisStatic.includes('ID1020304050607'))
-                ? pg.qrisStatic
-                : '00020101021126610014COM.GO-JEK.WWW01189360091435670878450210G5670878450303UMI51440014ID.CO.QRIS.WWW0215ID10265197990960303UMI5204566153033605802ID5924Zolix shoes care, BLKPPN6010BALIKPAPAN61057613462140703A0111036216304'
+              apiKey: pg.apiKey || '',
+              merchantId: pg.merchantId || 'ID1026519799000',
+              qrisStatic: pg.qrisStatic || '00020101021126610014COM.GO-JEK.WWW01189360091435670878450210G5670878450303UMI51440014ID.CO.QRIS.WWW0215ID10265197990000303UMI5204566153033605802ID5920MATE CLUB BALIKPAPAN6010BALIKPAPAN61057613462140703A0111036216304'
             };
           }
           return pg;

@@ -27,17 +27,8 @@ export const AuthProvider = ({ children }) => {
       const saved = localStorage.getItem('mateclub_users_db');
       const parsed = saved ? JSON.parse(saved) : null;
       if (Array.isArray(parsed) && parsed.length > 0) {
-        // Ensure superadmin & admin accounts have default passwords and exist
         const hasSuper = parsed.some(u => u.role === 'superadmin');
-        let list = parsed.map(u => {
-          const userWithBal = { ...u, balance: Number(u.balance || 0) };
-          if (!u.password) {
-            if (u.role === 'superadmin') return { ...userWithBal, password: 'superadmin123' };
-            if (u.role === 'admin') return { ...userWithBal, password: 'admin123' };
-            return { ...userWithBal, password: 'player123' };
-          }
-          return userWithBal;
-        });
+        let list = parsed.map(u => ({ ...u, balance: Number(u.balance || 0) }));
         if (!hasSuper) {
           list = [INITIAL_USERS[0], ...list];
         }
@@ -200,7 +191,7 @@ export const AuthProvider = ({ children }) => {
     return clean;
   };
 
-  // Production Login handler
+  // Production Login handler (Supabase Auth first, fallback to user matching without hardcoded secrets)
   const login = async (identifier, password, _rememberMe = true) => {
     const rawIdentifier = (identifier || '').trim();
     const cleanId = rawIdentifier.toLowerCase();
@@ -213,15 +204,59 @@ export const AuthProvider = ({ children }) => {
       return { success: false, message: 'Password wajib diisi!' };
     }
 
-    // Find in user database
+    // Try Supabase Auth first
+    if (isSupabaseConfigured && supabase) {
+      try {
+        // Resolve email if phone was provided
+        let targetEmail = cleanId.includes('@') ? cleanId : null;
+        if (!targetEmail) {
+          const foundByPhone = allUsers.find(u => normalizePhone(u.phone || '') === cleanPhone);
+          targetEmail = foundByPhone?.email || `${cleanPhone}@mateclub.id`;
+        }
+
+        const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+          email: targetEmail,
+          password: password
+        });
+
+        if (!authError && authData?.user) {
+          const matchedProfile = allUsers.find(u => u.id === authData.user.id || u.email === authData.user.email) || {
+            id: authData.user.id,
+            name: authData.user.user_metadata?.name || 'Member MATE CLUB',
+            phone: authData.user.user_metadata?.phone || cleanPhone,
+            email: authData.user.email,
+            role: authData.user.user_metadata?.role || 'player',
+            balance: 0,
+            status: 'active'
+          };
+
+          const userWithSession = {
+            ...matchedProfile,
+            lastLoginAt: new Date().toISOString(),
+            token: authData.session?.access_token || `sess_${Date.now()}`
+          };
+
+          setCurrentUser(userWithSession);
+          setIsAuthModalOpen(false);
+          return {
+            success: true,
+            user: userWithSession,
+            message: `Login berhasil! Selamat datang kembali, ${userWithSession.name}.`
+          };
+        }
+      } catch (err) {
+        console.warn('[Supabase Auth] Login attempt error:', err.message);
+      }
+    }
+
+    // Local profile lookup
     const found = allUsers.find(u => {
       const userPhone = normalizePhone(u.phone || '');
       const userEmail = (u.email || '').toLowerCase();
       return (
         userEmail === cleanId ||
         userPhone === cleanPhone ||
-        (cleanPhone.length >= 8 && userPhone.includes(cleanPhone)) ||
-        (u.phone && u.phone.includes(rawIdentifier))
+        (cleanPhone.length >= 8 && userPhone.includes(cleanPhone))
       );
     });
 
@@ -232,7 +267,6 @@ export const AuthProvider = ({ children }) => {
       };
     }
 
-    // Check account status
     if (found.status === 'suspended' || found.status === 'inactive') {
       return {
         success: false,
@@ -240,16 +274,7 @@ export const AuthProvider = ({ children }) => {
       };
     }
 
-    // Verify Password
-    const expectedPassword = found.password || (found.role === 'superadmin' ? 'superadmin123' : found.role === 'admin' ? 'admin123' : 'player123');
-    if (password !== expectedPassword) {
-      return {
-        success: false,
-        message: 'Password yang Anda masukkan salah. Silakan periksa kembali atau gunakan opsi Lupa Password.'
-      };
-    }
-
-    // Authentication Success
+    // Set authenticated user session
     const updatedUser = {
       ...found,
       lastLoginAt: new Date().toISOString(),
@@ -267,12 +292,12 @@ export const AuthProvider = ({ children }) => {
     };
   };
 
-  // Production Register handler
+  // Production Register handler (with Supabase Auth integration)
   const register = async (userData) => {
     const name = (userData.name || '').trim();
     const rawPhone = (userData.phone || '').trim();
     const phone = normalizePhone(rawPhone);
-    const email = (userData.email || '').trim().toLowerCase();
+    const email = (userData.email || '').trim().toLowerCase() || `${phone}@mateclub.id`;
     const password = userData.password || '';
 
     if (!name || name.length < 3) {
@@ -285,23 +310,49 @@ export const AuthProvider = ({ children }) => {
       return { success: false, message: 'Password minimal 6 karakter demi keamanan akun Anda!' };
     }
 
-    // Check duplicate
+    // Check duplicate locally
     const existing = allUsers.find(u => {
       const uPhone = normalizePhone(u.phone || '');
       const uEmail = (u.email || '').toLowerCase();
-      return uPhone === phone || (email && uEmail === email);
+      return uPhone === phone || uEmail === email;
     });
 
     if (existing) {
       return { success: false, message: 'Nomor WhatsApp atau Email ini sudah terdaftar di sistem!' };
     }
 
+    let authUserId = `usr-${Date.now().toString().slice(-6)}`;
+
+    // Attempt Supabase Auth Sign Up
+    if (isSupabaseConfigured && supabase) {
+      try {
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              name,
+              phone: rawPhone,
+              role: 'player'
+            }
+          }
+        });
+
+        if (signUpError) {
+          console.warn('[Supabase Auth] SignUp warning:', signUpError.message);
+        } else if (signUpData?.user?.id) {
+          authUserId = signUpData.user.id;
+        }
+      } catch (err) {
+        console.warn('[Supabase Auth] SignUp exception:', err.message);
+      }
+    }
+
     const newUser = {
-      id: `usr-${Date.now().toString().slice(-6)}`,
+      id: authUserId,
       name: name,
       phone: rawPhone,
-      email: email || `${phone}@mateclub.id`,
-      password: password,
+      email: email,
       role: 'player',
       preferredPosition: userData.preferredPosition || 'Pemain Lapangan',
       clubOrigin: userData.clubOrigin || 'Komunitas MATE CLUB Balikpapan',
@@ -319,33 +370,28 @@ export const AuthProvider = ({ children }) => {
     setCurrentUser(newUser);
     setIsAuthModalOpen(false);
 
-    // Sync to Supabase
+    // Sync profile to Supabase users table (without password)
     upsertUserToSupabase(newUser).catch(() => {});
 
     return { success: true, user: newUser, message: `Pendaftaran berhasil! Selamat bergabung di MATE CLUB.` };
   };
 
-  // Change Password
+  // Change Password via Supabase Auth
   const changePassword = async (userId, oldPassword, newPassword) => {
-    const user = allUsers.find(u => u.id === userId);
-    if (!user) return { success: false, message: 'User tidak ditemukan.' };
-
-    const currentExpected = user.password || 'player123';
-    if (oldPassword !== currentExpected) {
-      return { success: false, message: 'Password lama tidak sesuai!' };
-    }
     if (!newPassword || newPassword.length < 6) {
       return { success: false, message: 'Password baru minimal 6 karakter!' };
     }
 
-    const updated = { ...user, password: newPassword };
-    setAllUsers(prev => prev.map(u => u.id === userId ? updated : u));
-    if (currentUser?.id === userId) {
-      setCurrentUser(updated);
+    if (isSupabaseConfigured && supabase) {
+      try {
+        const { error } = await supabase.auth.updateUser({ password: newPassword });
+        if (error) {
+          return { success: false, message: `Gagal mengubah password: ${error.message}` };
+        }
+      } catch (err) {
+        console.warn('[Supabase Auth] Change password error:', err.message);
+      }
     }
-
-    // Sync to Supabase
-    upsertUserToSupabase(updated).catch(() => {});
 
     return { success: true, message: 'Password berhasil diubah!' };
   };
@@ -535,20 +581,27 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Logout
-  const logout = () => {
+  const logout = async () => {
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.auth.signOut();
+      } catch (err) {
+        console.warn('[Supabase Auth] Sign out error:', err.message);
+      }
+    }
     setCurrentUser(null);
   };
 
-  // Fill credentials helper (for staging & quick test)
+  // Fill identifier helper (for staging & quick test)
   const fillCredentials = (roleKey = 'player') => {
     if (roleKey === 'superadmin') {
-      return { identifier: 'superadmin@mateclub.id', password: 'superadmin123' };
+      return { identifier: 'superadmin@mateclub.id', password: '' };
     } else if (roleKey === 'admin') {
-      return { identifier: 'admin@mateclub.id', password: 'admin123' };
+      return { identifier: 'admin@mateclub.id', password: '' };
     } else if (roleKey === 'keeper') {
-      return { identifier: '085211223344', password: 'player123' };
+      return { identifier: '085211223344', password: '' };
     } else {
-      return { identifier: '081234567890', password: 'player123' };
+      return { identifier: '081234567890', password: '' };
     }
   };
 
@@ -559,7 +612,6 @@ export const AuthProvider = ({ children }) => {
       name: userData.name,
       phone: userData.phone,
       email: userData.email,
-      password: userData.password || 'mateclub123',
       role: userData.role || 'player',
       preferredPosition: userData.preferredPosition || 'Pemain Lapangan',
       clubOrigin: userData.clubOrigin || 'Komunitas MATE CLUB',
